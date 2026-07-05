@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Лабиринт Маски</title>
+    <title>Лабиринт с порталом</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         body {
@@ -17,13 +17,13 @@
             overflow: hidden;
         }
         .game-wrapper {
-            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            background: linear-gradient(145deg, #1a1a2e, #0f0f2a);
             padding: 20px;
             border-radius: 30px;
-            box-shadow: 0 0 50px rgba(0, 150, 255, 0.2), inset 0 0 30px rgba(0, 50, 150, 0.1);
-            max-width: 440px;
+            box-shadow: 0 0 60px rgba(0, 150, 255, 0.2), inset 0 0 40px rgba(0, 50, 150, 0.1);
+            max-width: 480px;
             width: 100%;
-            border: 1px solid #2a3a6a;
+            border: 1px solid #2a4a7a;
         }
         .header {
             display: flex;
@@ -31,27 +31,27 @@
             align-items: center;
             color: #c8d0e0;
             padding: 0 6px 14px 6px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            flex-wrap: wrap;
+            gap: 4px;
         }
-        .header .title { 
-            background: linear-gradient(90deg, #f7c948, #f39c12);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 20px;
-        }
+        .header .title { background: linear-gradient(90deg, #f7c948, #f39c12); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 18px; }
+        .header .score, .header .best, .header .level { font-size: 14px; }
         .header .score { color: #f7c948; -webkit-text-fill-color: #f7c948; }
-        .header .best { color: #8a9ab0; font-size: 14px; }
+        .header .best { color: #8a9ab0; }
+        .header .level { color: #6a8ab0; }
         canvas {
             display: block;
             width: 100%;
             aspect-ratio: 1/1;
-            background: radial-gradient(ellipse at center, #1a2a4a, #0e1a2e);
+            background: radial-gradient(ellipse at center, #1a2a4a, #0a1220);
             border-radius: 20px;
             border: 2px solid #2a4a7a;
             box-shadow: inset 0 0 40px rgba(0, 20, 60, 0.8);
             touch-action: none;
+            cursor: pointer;
         }
         .controls {
             display: flex;
@@ -70,14 +70,11 @@
             cursor: pointer;
             transition: 0.1s;
             box-shadow: 0 5px 0 rgba(0,0,0,0.3);
-            letter-spacing: 2px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .controls button:active { transform: translateY(4px); box-shadow: none; }
         .controls .left { background: linear-gradient(145deg, #6a3a8a, #4a2a6a); }
         .controls .right { background: linear-gradient(145deg, #2a8a5a, #1a6a4a); }
-        .controls .left:active { background: #3a1a5a; }
-        .controls .right:active { background: #0a5a3a; }
         .restart-btn {
             margin-top: 14px;
             padding: 12px;
@@ -103,26 +100,27 @@
         }
         @media (max-width: 480px) {
             .game-wrapper { padding: 12px; }
-            .header { font-size: 15px; padding-bottom: 10px; }
+            .header { font-size: 13px; }
+            .header .title { font-size: 15px; }
             .controls button { padding: 14px; font-size: 20px; }
-            .restart-btn { padding: 10px; font-size: 14px; }
         }
     </style>
 </head>
 <body>
 <div class="game-wrapper">
     <div class="header">
-        <span class="title">🏛️ ЛАБИРИНТ</span>
+        <span class="title">🌀 ЛАБИРИНТ</span>
+        <span class="level">📍 <span id="levelDisplay">1</span>/10</span>
         <span class="score">🏆 <span id="scoreDisplay">0</span></span>
         <span class="best">👑 <span id="bestDisplay">0</span></span>
     </div>
-    <canvas id="gameCanvas" width="500" height="500"></canvas>
+    <canvas id="gameCanvas" width="600" height="600"></canvas>
     <div class="controls">
         <button class="left" id="leftBtn">◀</button>
         <button class="right" id="rightBtn">▶</button>
     </div>
     <button class="restart-btn" id="restartBtn">🔄 Новая игра</button>
-    <div class="info">⬅️➡️ Проходи лабиринт, собирай монеты</div>
+    <div class="info">Дойди до портала, избегай змеек и бластеров</div>
 </div>
 
 <script>
@@ -130,6 +128,7 @@
     const ctx = canvas.getContext('2d');
     const scoreSpan = document.getElementById('scoreDisplay');
     const bestSpan = document.getElementById('bestDisplay');
+    const levelSpan = document.getElementById('levelDisplay');
 
     const STORAGE_KEY = 'tombMaskProgress';
     function loadProgress() {
@@ -147,74 +146,123 @@
     let best = progress.best;
     bestSpan.textContent = best;
 
-    // ==== НАСТРОЙКИ ====
-    const COLS = 10;
-    const ROWS = 10;
+    // ==== РАЗМЕРЫ ====
+    const COLS = 12;
+    const ROWS = 12;
     const CELL = 50;
     const GAP = 3;
-    const canvasSize = 500;
+    const canvasSize = 600;
 
-    // ==== ПЕРСОНАЖ ====
+    // ==== ИГРОК ====
     const player = {
-        x: 4, y: 9,
-        size: 36,
-        eyeColor: '#fff',
-        bodyColor: '#f1c40f'
+        x: 5, y: 11,
+        size: 32,
+        color: '#f1c40f',
+        shadow: '#f39c12'
     };
 
-    // ==== УРОВНИ ====
+    // ==== ИГРОВЫЕ ОБЪЕКТЫ ====
     let obstacles = [];
-    let coins = [];
+    let blasters = [];
+    let snake = { x: 0, y: 0, dx: 1, dy: 0, active: false, speed: 0.3 };
     let score = 0;
+    let level = 1;
     let gameOver = false;
     let win = false;
-    let speed = 1;
+    let speed = 0.025;
+    let canRestart = false;
+    let portalX = 5;
+    let portalY = 0;
 
-    // ==== ГЕНЕРАЦИЯ ЛАБИРИНТА ====
-    function generateLevel() {
+    // ==== ГЕНЕРАЦИЯ УРОВНЯ ====
+    function generateLevel(lvl) {
         const newObs = [];
-        const newCoins = [];
+        const newBlasters = [];
+        const count = 2 + Math.floor((lvl - 1) * 0.6);
+        const blasterCount = Math.floor(lvl / 2) + 1;
+
         // Стены и шипы
         for (let row = 0; row < ROWS; row++) {
-            const count = 2 + Math.floor(Math.random() * 3);
+            const cnt = count + Math.floor(Math.random() * 2);
             const positions = [];
-            for (let i = 0; i < count; i++) {
+            for (let i = 0; i < cnt; i++) {
                 let col;
                 do {
                     col = Math.floor(Math.random() * COLS);
-                } while (positions.includes(col) || (row === 9 && col === player.x) || (row === 0 && col === 4));
+                } while (positions.includes(col) || (row === ROWS-1 && col === player.x) || (row === 0 && col === 5));
                 positions.push(col);
                 newObs.push({
                     row, col,
-                    type: Math.random() > 0.6 ? 'spike' : 'wall',
-                    anim: Math.random() * 100
+                    type: Math.random() > 0.5 ? 'spike' : 'wall'
                 });
             }
         }
-        // Монеты
-        for (let i = 0; i < 5; i++) {
-            let row, col;
+
+        // Бластеры
+        for (let i = 0; i < blasterCount; i++) {
+            let row, col, dir;
             do {
-                row = Math.floor(Math.random() * (ROWS - 1));
+                row = Math.floor(Math.random() * (ROWS - 2)) + 1;
                 col = Math.floor(Math.random() * COLS);
-            } while (newObs.some(o => o.row === row && o.col === col) || (row === 9 && col === player.x));
-            newCoins.push({ row, col, collected: false });
+                dir = Math.random() > 0.5 ? 'up' : 'down';
+            } while (newObs.some(o => o.row === row && o.col === col) || (row === ROWS-1 && col === player.x));
+            newBlasters.push({
+                row, col,
+                dir: dir,
+                timer: 0,
+                cooldown: 40 + Math.random() * 60,
+                color: `hsl(${Math.random() * 60 + 180}, 100%, 60%)`,
+                shot: 0
+            });
         }
-        return { obstacles: newObs, coins: newCoins };
+
+        // Змейка
+        let snakeActive = lvl > 2;
+        let snakeStartX = 0, snakeStartY = 0;
+        if (snakeActive) {
+            const side = Math.floor(Math.random() * 4);
+            if (side === 0) { snakeStartX = 0; snakeStartY = Math.floor(Math.random() * ROWS); }
+            else if (side === 1) { snakeStartX = COLS - 1; snakeStartY = Math.floor(Math.random() * ROWS); }
+            else if (side === 2) { snakeStartX = Math.floor(Math.random() * COLS); snakeStartY = 0; }
+            else { snakeStartX = Math.floor(Math.random() * COLS); snakeStartY = ROWS - 1; }
+        }
+
+        return {
+            obstacles: newObs,
+            blasters: newBlasters,
+            snakeActive: snakeActive,
+            snakeX: snakeStartX,
+            snakeY: snakeStartY
+        };
     }
 
-    function initLevel() {
-        const level = generateLevel();
-        obstacles = level.obstacles;
-        coins = level.coins;
-        player.x = 4;
-        player.y = 9;
+    function initLevel(lvl) {
+        const data = generateLevel(lvl);
+        obstacles = data.obstacles;
+        blasters = data.blasters;
+        player.x = 5;
+        player.y = ROWS - 1;
+        if (data.snakeActive) {
+            snake = {
+                x: data.snakeX, y: data.snakeY,
+                dx: Math.random() > 0.5 ? 1 : -1,
+                dy: Math.random() > 0.5 ? 1 : -1,
+                active: true,
+                speed: 0.2 + lvl * 0.03
+            };
+        } else {
+            snake = { x: 0, y: 0, dx: 1, dy: 0, active: false, speed: 0 };
+        }
         gameOver = false;
         win = false;
-        speed = 1;
+        speed = 0.025 + (lvl - 1) * 0.005;
+        canRestart = false;
+        levelSpan.textContent = lvl;
+        portalX = 5;
+        portalY = 0;
     }
 
-    initLevel();
+    initLevel(level);
 
     // ==== УПРАВЛЕНИЕ ====
     function moveLeft() {
@@ -237,240 +285,334 @@
         }
     }
 
+    function restartGame() {
+        if (!canRestart && !gameOver && !win) return;
+        score = 0;
+        level = 1;
+        scoreSpan.textContent = score;
+        initLevel(level);
+        canRestart = false;
+    }
+
     // ==== ОБНОВЛЕНИЕ ====
     function update() {
         if (gameOver || win) return;
 
         // Движение вверх
-        player.y -= speed / 60;
+        player.y -= speed;
 
-        // Выход на новый уровень
+        // Портал (переход на новый уровень)
         if (player.y < 0) {
             player.y = 0;
-            // Собираем монеты
-            const collected = coins.filter(c => !c.collected);
-            if (collected.length === 0) {
+            if (level >= 10) {
                 win = true;
-                score += 10;
+                score += 25;
                 scoreSpan.textContent = score;
                 if (score > best) {
                     best = score;
                     saveProgress(best);
                     bestSpan.textContent = best;
                 }
+                canRestart = true;
                 return;
             }
-            // Переход на следующий уровень
-            const level = generateLevel();
-            obstacles = level.obstacles;
-            coins = level.coins;
-            player.y = 9;
-            player.x = 4;
-            score += 1;
+            level++;
+            levelSpan.textContent = level;
+            const data = generateLevel(level);
+            obstacles = data.obstacles;
+            blasters = data.blasters;
+            if (data.snakeActive) {
+                snake = {
+                    x: data.snakeX, y: data.snakeY,
+                    dx: Math.random() > 0.5 ? 1 : -1,
+                    dy: Math.random() > 0.5 ? 1 : -1,
+                    active: true,
+                    speed: 0.2 + level * 0.03
+                };
+            } else {
+                snake = { x: 0, y: 0, dx: 1, dy: 0, active: false, speed: 0 };
+            }
+            player.y = ROWS - 1;
+            player.x = 5;
+            score += 3;
             scoreSpan.textContent = score;
             if (score > best) {
                 best = score;
                 saveProgress(best);
                 bestSpan.textContent = best;
             }
+            canRestart = true;
+            return;
         }
 
-        // Сбор монет
+        // Змейка
+        if (snake.active) {
+            snake.x += snake.dx * snake.speed;
+            snake.y += snake.dy * snake.speed;
+            if (snake.x < 0 || snake.x >= COLS || snake.y < 0 || snake.y >= ROWS) {
+                // Разворот
+                if (snake.x < 0) snake.x = 0.5;
+                if (snake.x >= COLS) snake.x = COLS - 0.5;
+                if (snake.y < 0) snake.y = 0.5;
+                if (snake.y >= ROWS) snake.y = ROWS - 0.5;
+                snake.dx *= -1;
+                snake.dy *= -1;
+            }
+            // Столкновение с игроком
+            const dist = Math.sqrt((snake.x - player.x) ** 2 + (snake.y - player.y) ** 2);
+            if (dist < 0.8) {
+                gameOver = true;
+                canRestart = true;
+            }
+        }
+
+        // Бластеры
         const row = Math.floor(player.y);
         const col = player.x;
-        coins.forEach(c => {
-            if (!c.collected && c.row === row && c.col === col) {
-                c.collected = true;
-                score += 5;
-                scoreSpan.textContent = score;
-                if (score > best) {
-                    best = score;
-                    saveProgress(best);
-                    bestSpan.textContent = best;
+        blasters.forEach(b => {
+            b.timer++;
+            if (b.timer >= b.cooldown) {
+                b.timer = 0;
+                const laserRow = b.dir === 'up' ? row - 1 : row + 1;
+                if (laserRow === row && b.col === col) {
+                    gameOver = true;
+                    canRestart = true;
                 }
+                b.shot = 20;
             }
+            if (b.shot > 0) b.shot--;
         });
 
-        // Столкновения
+        // Столкновения со стенами
         const hit = obstacles.some(o => o.row === row && o.col === col);
-        if (hit) gameOver = true;
+        if (hit) {
+            gameOver = true;
+            canRestart = true;
+        }
     }
 
     // ==== ОТРИСОВКА ====
     function draw() {
         ctx.clearRect(0, 0, canvasSize, canvasSize);
 
-        // Фон лабиринта
+        // Фон
+        const grad = ctx.createRadialGradient(300, 300, 50, 300, 300, 450);
+        grad.addColorStop(0, '#1a2a4a');
+        grad.addColorStop(1, '#0a1220');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvasSize, canvasSize);
+
+        // Сетка лабиринта
         for (let r = 0; r < ROWS; r++) {
             for (let c = 0; c < COLS; c++) {
                 const x = c * CELL + GAP;
                 const y = r * CELL + GAP;
                 const isDark = (r + c) % 2 === 0;
                 ctx.fillStyle = isDark ? '#1a2a4a' : '#12203a';
-                ctx.shadowColor = 'rgba(0,0,0,0.3)';
-                ctx.shadowBlur = 4;
                 ctx.fillRect(x, y, CELL - GAP, CELL - GAP);
-                ctx.shadowBlur = 0;
             }
         }
 
-        // Стены и шипы
+        // Стены и шипы (объёмные)
         obstacles.forEach(o => {
             const x = o.col * CELL + GAP;
             const y = o.row * CELL + GAP;
             if (o.type === 'spike') {
-                // Шипы
+                // Шипы (маленькие)
                 ctx.fillStyle = '#e74c3c';
                 ctx.shadowColor = '#e74c3c';
                 ctx.shadowBlur = 10;
-                ctx.beginPath();
-                ctx.moveTo(x + 10, y + 35);
-                ctx.lineTo(x + 25, y + 5);
-                ctx.lineTo(x + 40, y + 35);
-                ctx.fill();
+                for (let i = 0; i < 3; i++) {
+                    const sx = x + 6 + i * 12;
+                    ctx.beginPath();
+                    ctx.moveTo(sx + 4, y + 30);
+                    ctx.lineTo(sx + 10, y + 12);
+                    ctx.lineTo(sx + 16, y + 30);
+                    ctx.fill();
+                }
                 ctx.shadowBlur = 0;
-                // Второй шип
-                ctx.fillStyle = '#c0392b';
-                ctx.beginPath();
-                ctx.moveTo(x + 5, y + 40);
-                ctx.lineTo(x + 15, y + 20);
-                ctx.lineTo(x + 25, y + 40);
-                ctx.fill();
             } else {
-                // Стены с градиентом
-                const grad = ctx.createLinearGradient(x, y, x + CELL, y + CELL);
-                grad.addColorStop(0, '#4a6a9a');
-                grad.addColorStop(0.5, '#3a5a8a');
-                grad.addColorStop(1, '#2a4a7a');
-                ctx.fillStyle = grad;
-                ctx.shadowColor = '#3a5a8a';
-                ctx.shadowBlur = 12;
-                ctx.fillRect(x + 1, y + 1, CELL - GAP - 2, CELL - GAP - 2);
+                // Объёмные стены
+                const x2 = x + CELL - GAP;
+                const y2 = y + CELL - GAP;
+                // Основная стена
+                const grad2 = ctx.createLinearGradient(x, y, x2, y2);
+                grad2.addColorStop(0, '#4a7ab0');
+                grad2.addColorStop(0.5, '#3a5a8a');
+                grad2.addColorStop(1, '#2a4a7a');
+                ctx.fillStyle = grad2;
+                ctx.shadowColor = '#3a6a9a';
+                ctx.shadowBlur = 15;
+                ctx.fillRect(x, y, CELL - GAP, CELL - GAP);
                 ctx.shadowBlur = 0;
-                // Блик
-                ctx.fillStyle = 'rgba(255,255,255,0.05)';
-                ctx.fillRect(x + 2, y + 2, CELL - GAP - 8, 3);
+                // Свет
+                ctx.fillStyle = 'rgba(255,255,255,0.12)';
+                ctx.fillRect(x + 2, y + 2, CELL - GAP - 12, 4);
+                ctx.fillRect(x + 2, y + 2, 4, CELL - GAP - 12);
+                // Тень
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.fillRect(x2 - 6, y + 4, 4, CELL - GAP - 8);
+                ctx.fillRect(x + 4, y2 - 6, CELL - GAP - 8, 4);
             }
         });
 
-        // Монеты
-        coins.forEach(c => {
-            if (c.collected) return;
-            const x = c.col * CELL + CELL/2;
-            const y = c.row * CELL + CELL/2;
-            ctx.shadowColor = '#f1c40f';
-            ctx.shadowBlur = 20;
-            ctx.fillStyle = '#f1c40f';
+        // Бластеры
+        blasters.forEach(b => {
+            const x = b.col * CELL + CELL/2;
+            const y = b.row * CELL + CELL/2;
+            ctx.shadowColor = b.color;
+            ctx.shadowBlur = 25;
+            ctx.fillStyle = b.color;
             ctx.beginPath();
             ctx.arc(x, y, 10, 0, Math.PI * 2);
             ctx.fill();
             ctx.shadowBlur = 0;
-            ctx.fillStyle = '#f39c12';
+            ctx.fillStyle = '#fff';
             ctx.beginPath();
-            ctx.arc(x - 2, y - 3, 4, 0, Math.PI * 2);
+            ctx.arc(x - 3, y - 3, 3, 0, Math.PI * 2);
             ctx.fill();
+            if (b.shot > 0) {
+                ctx.shadowColor = b.color;
+                ctx.shadowBlur = 50;
+                ctx.strokeStyle = b.color;
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                const startX = x;
+                const startY = b.dir === 'up' ? y - 15 : y + 15;
+                const endY = b.dir === 'up' ? -10 : canvasSize + 10;
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(startX, endY);
+                ctx.stroke();
+                ctx.shadowBlur = 80;
+                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                ctx.lineWidth = 12;
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(startX, endY);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
         });
 
-        // Выход (финиш)
-        const exitX = 4 * CELL + CELL/2;
-        const exitY = 0 * CELL + CELL/2;
+        // Змейка
+        if (snake.active) {
+            const sx = snake.x * CELL + CELL/2;
+            const sy = snake.y * CELL + CELL/2;
+            ctx.shadowColor = '#2ecc71';
+            ctx.shadowBlur = 30;
+            ctx.fillStyle = '#2ecc71';
+            ctx.beginPath();
+            ctx.arc(sx, sy, 14, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#1a7a4a';
+            ctx.beginPath();
+            ctx.arc(sx - 4, sy - 4, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(sx - 6, sy - 6, 2, 0, Math.PI * 2);
+            ctx.fill();
+            // Хвост
+            ctx.fillStyle = '#27ae60';
+            ctx.beginPath();
+            ctx.arc(sx - snake.dx * 20, sy - snake.dy * 20, 8, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Портал (выход)
+        const px = portalX * CELL + CELL/2;
+        const py = portalY * CELL + CELL/2;
         ctx.shadowColor = '#2ecc71';
-        ctx.shadowBlur = 25;
+        ctx.shadowBlur = 40;
         ctx.fillStyle = '#2ecc71';
         ctx.beginPath();
-        ctx.arc(exitX, exitY, 18, 0, Math.PI * 2);
+        ctx.arc(px, py, 20, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
-        ctx.fillStyle = '#27ae60';
-        ctx.font = '20px Arial';
+        ctx.fillStyle = '#1a7a4a';
+        ctx.beginPath();
+        ctx.arc(px, py, 12, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = '18px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('🏁', exitX, exitY + 2);
+        ctx.fillText('🌀', px, py + 2);
 
-        // Игрок (человечек)
-        const px = player.x * CELL + CELL/2;
-        const py = player.y * CELL + CELL/2;
-
-        // Тень
-        ctx.shadowColor = 'rgba(0,0,0,0.3)';
-        ctx.shadowBlur = 20;
-        // Тело
-        ctx.fillStyle = player.bodyColor;
+        // Игрок
+        const px2 = player.x * CELL + CELL/2;
+        const py2 = player.y * CELL + CELL/2;
         ctx.shadowColor = '#f1c40f';
-        ctx.shadowBlur = 25;
+        ctx.shadowBlur = 35;
+        ctx.fillStyle = '#f1c40f';
         ctx.beginPath();
-        ctx.arc(px, py - 4, 16, 0, Math.PI * 2);
+        ctx.arc(px2, py2 - 4, 16, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
-        // Глаза
         ctx.fillStyle = '#2c3e50';
         ctx.beginPath();
-        ctx.arc(px - 6, py - 8, 4, 0, Math.PI * 2);
+        ctx.arc(px2 - 6, py2 - 8, 4, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(px + 6, py - 8, 4, 0, Math.PI * 2);
+        ctx.arc(px2 + 6, py2 - 8, 4, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = '#fff';
         ctx.beginPath();
-        ctx.arc(px - 4, py - 10, 1.5, 0, Math.PI * 2);
+        ctx.arc(px2 - 4, py2 - 10, 1.5, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(px + 8, py - 10, 1.5, 0, Math.PI * 2);
+        ctx.arc(px2 + 8, py2 - 10, 1.5, 0, Math.PI * 2);
         ctx.fill();
-        // Улыбка
         ctx.strokeStyle = '#2c3e50';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.arc(px, py - 2, 6, 0.1, Math.PI - 0.1);
+        ctx.arc(px2, py2 - 2, 6, 0.1, Math.PI - 0.1);
         ctx.stroke();
-        // Шапка
         ctx.fillStyle = '#e67e22';
-        ctx.fillRect(px - 12, py - 22, 24, 6);
-        ctx.fillRect(px - 8, py - 28, 16, 8);
-        // Ноги
+        ctx.fillRect(px2 - 12, py2 - 22, 24, 6);
+        ctx.fillRect(px2 - 8, py2 - 28, 16, 8);
         ctx.fillStyle = '#2c3e50';
-        ctx.fillRect(px - 8, py + 12, 6, 8);
-        ctx.fillRect(px + 2, py + 12, 6, 8);
-        // Руки
+        ctx.fillRect(px2 - 8, py2 + 12, 6, 8);
+        ctx.fillRect(px2 + 2, py2 + 12, 6, 8);
         ctx.fillStyle = '#d4a017';
-        ctx.fillRect(px - 18, py - 2, 6, 12);
-        ctx.fillRect(px + 12, py - 2, 6, 12);
-
-        ctx.shadowBlur = 0;
+        ctx.fillRect(px2 - 18, py2 - 2, 6, 12);
+        ctx.fillRect(px2 + 12, py2 - 2, 6, 12);
 
         // Game Over / Win
         if (gameOver) {
-            ctx.fillStyle = 'rgba(0,0,0,0.7)';
-            ctx.fillRect(0, 0, 500, 500);
+            ctx.fillStyle = 'rgba(0,0,0,0.75)';
+            ctx.fillRect(0, 0, canvasSize, canvasSize);
             ctx.fillStyle = '#e74c3c';
             ctx.font = 'bold 40px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('💀 GAME OVER', 250, 220);
+            ctx.fillText('💀 GAME OVER', canvasSize/2, 240);
             ctx.fillStyle = '#aaa';
             ctx.font = '18px Arial';
-            ctx.fillText('Нажми "Новая игра"', 250, 270);
+            ctx.fillText('Коснись экрана', canvasSize/2, 290);
         }
 
         if (win) {
-            ctx.fillStyle = 'rgba(0,0,0,0.6)';
-            ctx.fillRect(0, 0, 500, 500);
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.fillRect(0, 0, canvasSize, canvasSize);
             ctx.fillStyle = '#f1c40f';
-            ctx.font = 'bold 38px Arial';
+            ctx.font = 'bold 36px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('🎉 УРОВЕНЬ ПРОЙДЕН!', 250, 220);
+            ctx.fillText('🎉 ПОБЕДА!', canvasSize/2, 240);
             ctx.fillStyle = '#2ecc71';
             ctx.font = '22px Arial';
-            ctx.fillText('Нажми "Новая игра"', 250, 270);
+            ctx.fillText('Коснись экрана', canvasSize/2, 290);
         }
     }
 
     // ==== КНОПКИ ====
     document.getElementById('leftBtn').addEventListener('click', moveLeft);
     document.getElementById('rightBtn').addEventListener('click', moveRight);
-    document.getElementById('restartBtn').addEventListener('click', () => {
-        score = 0;
-        scoreSpan.textContent = score;
-        initLevel();
+    document.getElementById('restartBtn').addEventListener('click', restartGame);
+
+    // ==== ТАП ПО ЭКРАНУ ====
+    canvas.addEventListener('click', () => {
+        if (gameOver || win) restartGame();
     });
 
     // ==== СВАЙПЫ ====
@@ -496,4 +638,4 @@
     gameLoop();
 </script>
 </body>
-</html>
+    </html>
