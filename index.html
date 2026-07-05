@@ -1,1 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mrlaifon — соцсеть</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
+        .app { max-width: 700px; width: 100%; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
+        /* Авторизация */
+        .auth { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .auth input { padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; }
+        .auth button { padding: 12px; background: #2b7cf7; color: #fff; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; }
+
+        .hidden { display: none !important; }
+
+        /* Лента */
+        .feed { display: flex; flex-direction: column; gap: 16px; }
+        .post { background: #fff; border: 1px solid #e4e6eb; border-radius: 12px; padding: 14px; }
+        .post .author { font-weight: bold; color: #050505; }
+        .post .time { font-size: 12px; color: #65676b; margin-left: 8px; }
+        .post .content { margin: 10px 0; }
+        .post img { max-width: 100%; border-radius: 10px; margin-top: 8px; }
+
+        /* Кнопки */
+        .btn { background: #2b7cf7; color: white; border: none; padding: 10px 16px; border-radius: 10px; font-size: 14px; cursor: pointer; }
+        .btn-outline { background: none; border: 1px solid #2b7cf7; color: #2b7cf7; }
+
+        /* Настройки и профиль */
+        .profile-card { background: #f7f8fa; padding: 16px; border-radius: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .profile-card .info { font-weight: 500; }
+        .settings-panel { background: #f7f8fa; padding: 16px; border-radius: 12px; margin-bottom: 16px; }
+        .settings-panel input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin: 6px 0; }
+
+        /* Загрузка фото */
+        .upload-area { border: 2px dashed #ddd; padding: 20px; text-align: center; border-radius: 12px; margin-bottom: 16px; }
+        .upload-area input { display: none; }
+        .upload-area label { cursor: pointer; color: #2b7cf7; font-weight: 500; }
+    </style>
+</head>
+<body>
+<div class="app" id="app">
+
+    <!-- БЛОК АВТОРИЗАЦИИ -->
+    <div id="authBlock" class="auth">
+        <h2>Добро пожаловать</h2>
+        <input type="text" id="loginInput" placeholder="Логин">
+        <input type="password" id="passInput" placeholder="Пароль">
+        <button id="loginBtn">Войти / Зарегистрироваться</button>
+        <span id="authStatus" style="color:red;font-size:14px;"></span>
+    </div>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <div id="mainBlock" class="hidden">
+        <!-- Профиль -->
+        <div class="profile-card">
+            <span class="info" id="userDisplay">👤 Пользователь</span>
+            <div>
+                <button class="btn-outline" id="settingsToggle" style="margin-right:8px;">⚙️</button>
+                <button class="btn-outline" id="logoutBtn">🚪 Выйти</button>
+            </div>
+        </div>
+
+        <!-- Панель настроек -->
+        <div id="settingsPanel" class="settings-panel hidden">
+            <h4>Настройки</h4>
+            <label>Имя пользователя</label>
+            <input type="text" id="settingsName" placeholder="Ваше имя">
+            <button id="saveSettingsBtn" class="btn" style="width:100%;margin-top:8px;">Сохранить</button>
+        </div>
+
+        <!-- Загрузка фото -->
+        <div class="upload-area">
+            <label for="fileInput">📸 Загрузить фото для поста</label>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+
+        <!-- Форма поста -->
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+            <input type="text" id="postInput" placeholder="Что у вас нового?" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:10px;">
+            <button id="postBtn" class="btn">📤</button>
+        </div>
+
+        <!-- Лента -->
+        <div id="feed" class="feed">
+            <!-- посты будут здесь -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==== ХРАНИЛИЩЕ ====
+    const STORAGE_KEY = 'mrlaifon_data';
+
+    let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+        users: {},          // логин: { password, name, posts: [{text, time, img}] }
+        currentUser: null
+    };
+
+    function save() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function renderFeed() {
+        const feed = document.getElementById('feed');
+        const user = data.currentUser ? data.users[data.currentUser] : null;
+        if (!user) { feed.innerHTML = '<p>Войдите, чтобы видеть посты</p>'; return; }
+
+        const posts = user.posts || [];
+        if (posts.length === 0) {
+            feed.innerHTML = '<p style="color:#888;">Пока нет постов. Будьте первым!</p>';
+            return;
+        }
+
+        feed.innerHTML = posts.slice().reverse().map(p => `
+            <div class="post">
+                <div><span class="author">${user.name || 'Аноним'}</span><span class="time">${p.time}</span></div>
+                <div class="content">${p.text}</div>
+                ${p.img ? `<img src="${p.img}" alt="Фото">` : ''}
+            </div>
+        `).join('');
+    }
+
+    function updateUI() {
+        const authBlock = document.getElementById('authBlock');
+        const mainBlock = document.getElementById('mainBlock');
+        const userDisplay = document.getElementById('userDisplay');
+
+        if (data.currentUser && data.users[data.currentUser]) {
+            authBlock.classList.add('hidden');
+            mainBlock.classList.remove('hidden');
+            const user = data.users[data.currentUser];
+            userDisplay.textContent = `👤 ${user.name || data.currentUser}`;
+            document.getElementById('settingsName').value = user.name || '';
+            renderFeed();
+        } else {
+            authBlock.classList.remove('hidden');
+            mainBlock.classList.add('hidden');
+        }
+    }
+
+    // ==== АВТОРИЗАЦИЯ ====
+    document.getElementById('loginBtn').addEventListener('click', () => {
+        const login = document.getElementById('loginInput').value.trim();
+        const pass = document.getElementById('passInput').value.trim();
+        const status = document.getElementById('authStatus');
+
+        if (!login || !pass) { status.textContent = 'Заполните оба поля'; return; }
+
+        if (data.users[login]) {
+            // существующий пользователь
+            if (data.users[login].password === pass) {
+                data.currentUser = login;
+                save();
+                status.textContent = '';
+                updateUI();
+            } else {
+                status.textContent = 'Неверный пароль';
+            }
+        } else {
+            // новый пользователь
+            data.users[login] = { password: pass, name: login, posts: [] };
+            data.currentUser = login;
+            save();
+            status.textContent = '';
+            updateUI();
+        }
+    });
+
+    // ==== ВЫХОД ====
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        data.currentUser = null;
+        save();
+        updateUI();
+    });
+
+    // ==== НАСТРОЙКИ ====
+    document.getElementById('settingsToggle').addEventListener('click', () => {
+        const panel = document.getElementById('settingsPanel');
+        panel.classList.toggle('hidden');
+    });
+
+    document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+        if (!data.currentUser) return;
+        const name = document.getElementById('settingsName').value.trim() || data.currentUser;
+        data.users[data.currentUser].name = name;
+        save();
+        updateUI();
+        document.getElementById('settingsPanel').classList.add('hidden');
+    });
+
+    // ==== НОВЫЙ ПОСТ ====
+    function addPost(text, imgData = null) {
+        if (!data.currentUser) return;
+        const user = data.users[data.currentUser];
+        if (!user.posts) user.posts = [];
+        user.posts.push({
+            text: text || '😊',
+            time: new Date().toLocaleString('ru-RU'),
+            img: imgData
+        });
+        save();
+        renderFeed();
+    }
+
+    document.getElementById('postBtn').addEventListener('click', () => {
+        const input = document.getElementById('postInput');
+        const text = input.value.trim();
+        if (text) {
+            addPost(text);
+            input.value = '';
+        }
+    });
+
+    // ==== ЗАГРУЗКА ФОТО ====
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            const imgData = ev.target.result;
+            const input = document.getElementById('postInput');
+            const text = input.value.trim() || '📸 Фото';
+            addPost(text, imgData);
+            input.value = '';
+            document.getElementById('fileInput').value = '';
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // ==== ЗАПУСК ====
+    updateUI();
+</script>
+</body>
+</html>
