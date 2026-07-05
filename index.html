@@ -2,107 +2,127 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Лабиринт Маски</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         body {
-            background: #0d0d0d;
+            background: #0a0a1a;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             font-family: 'Segoe UI', sans-serif;
-            padding: 8px;
+            padding: 10px;
+            overflow: hidden;
         }
-        .game-container {
-            background: #1a1a2e;
-            padding: 16px;
-            border-radius: 24px;
-            box-shadow: 0 0 40px rgba(255, 100, 0, 0.15);
-            max-width: 400px;
+        .game-wrapper {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            padding: 20px;
+            border-radius: 30px;
+            box-shadow: 0 0 50px rgba(0, 150, 255, 0.2), inset 0 0 30px rgba(0, 50, 150, 0.1);
+            max-width: 440px;
             width: 100%;
+            border: 1px solid #2a3a6a;
         }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: #fff;
-            padding: 0 6px 12px 6px;
+            color: #c8d0e0;
+            padding: 0 6px 14px 6px;
             font-size: 18px;
             font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
-        .header .score { color: #f7c948; }
-        .header .best { color: #7a8a9f; font-size: 14px; }
+        .header .title { 
+            background: linear-gradient(90deg, #f7c948, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 20px;
+        }
+        .header .score { color: #f7c948; -webkit-text-fill-color: #f7c948; }
+        .header .best { color: #8a9ab0; font-size: 14px; }
         canvas {
             display: block;
             width: 100%;
             aspect-ratio: 1/1;
-            background: #111827;
-            border-radius: 16px;
-            border: 2px solid #2a3a6a;
+            background: radial-gradient(ellipse at center, #1a2a4a, #0e1a2e);
+            border-radius: 20px;
+            border: 2px solid #2a4a7a;
+            box-shadow: inset 0 0 40px rgba(0, 20, 60, 0.8);
             touch-action: none;
         }
         .controls {
             display: flex;
             justify-content: space-between;
-            gap: 12px;
-            margin-top: 14px;
+            gap: 14px;
+            margin-top: 16px;
         }
         .controls button {
             flex: 1;
-            padding: 14px;
+            padding: 16px;
             border: none;
-            border-radius: 14px;
-            font-size: 22px;
+            border-radius: 16px;
+            font-size: 24px;
             font-weight: bold;
             color: #fff;
-            background: #2a3a6a;
             cursor: pointer;
-            transition: 0.15s;
-            box-shadow: 0 4px 0 #0f1a3a;
+            transition: 0.1s;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .controls button:active { transform: translateY(4px); box-shadow: none; }
-        .controls .left { background: #4a2a6a; }
-        .controls .right { background: #2a6a4a; }
+        .controls .left { background: linear-gradient(145deg, #6a3a8a, #4a2a6a); }
+        .controls .right { background: linear-gradient(145deg, #2a8a5a, #1a6a4a); }
+        .controls .left:active { background: #3a1a5a; }
+        .controls .right:active { background: #0a5a3a; }
         .restart-btn {
-            margin-top: 12px;
-            padding: 10px;
+            margin-top: 14px;
+            padding: 12px;
             width: 100%;
             border: none;
-            border-radius: 14px;
-            background: #4a3a6a;
-            color: #ccc;
+            border-radius: 16px;
+            background: linear-gradient(145deg, #3a3a6a, #2a2a5a);
+            color: #aab;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 0 #1a1a3a;
         }
-        .restart-btn:hover { background: #5a4a7a; }
+        .restart-btn:active { transform: translateY(3px); box-shadow: none; }
+        .restart-btn:hover { background: #4a4a7a; }
         .info {
             text-align: center;
-            color: #6a7a8f;
-            font-size: 13px;
+            color: #5a6a8a;
+            font-size: 12px;
             margin-top: 10px;
+            opacity: 0.7;
         }
         @media (max-width: 480px) {
-            .header { font-size: 15px; }
-            .controls button { padding: 12px; font-size: 18px; }
+            .game-wrapper { padding: 12px; }
+            .header { font-size: 15px; padding-bottom: 10px; }
+            .controls button { padding: 14px; font-size: 20px; }
+            .restart-btn { padding: 10px; font-size: 14px; }
         }
     </style>
 </head>
 <body>
-<div class="game-container">
+<div class="game-wrapper">
     <div class="header">
-        <span>🏛️ Маска</span>
+        <span class="title">🏛️ ЛАБИРИНТ</span>
         <span class="score">🏆 <span id="scoreDisplay">0</span></span>
         <span class="best">👑 <span id="bestDisplay">0</span></span>
     </div>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <canvas id="gameCanvas" width="500" height="500"></canvas>
     <div class="controls">
         <button class="left" id="leftBtn">◀</button>
         <button class="right" id="rightBtn">▶</button>
     </div>
-    <button class="restart-btn" id="restartBtn">🔄 Начать заново</button>
-    <div class="info">Уклоняйся от препятствий, двигайся влево/вправо</div>
+    <button class="restart-btn" id="restartBtn">🔄 Новая игра</button>
+    <div class="info">⬅️➡️ Проходи лабиринт, собирай монеты</div>
 </div>
 
 <script>
@@ -111,21 +131,14 @@
     const scoreSpan = document.getElementById('scoreDisplay');
     const bestSpan = document.getElementById('bestDisplay');
 
-    // ==== КЛЮЧ ДЛЯ ХРАНЕНИЯ ====
     const STORAGE_KEY = 'tombMaskProgress';
-
-    // ==== ЗАГРУЗКА ПРОГРЕССА ====
     function loadProgress() {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
-            try {
-                return JSON.parse(saved);
-            } catch(e) {}
+            try { return JSON.parse(saved); } catch(e) {}
         }
         return { best: 0 };
     }
-
-    // ==== СОХРАНЕНИЕ ПРОГРЕССА ====
     function saveProgress(best) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ best }));
     }
@@ -134,140 +147,78 @@
     let best = progress.best;
     bestSpan.textContent = best;
 
-    // Размеры
-    const CELL = 40;
+    // ==== НАСТРОЙКИ ====
     const COLS = 10;
     const ROWS = 10;
-    const GAP = 2;
+    const CELL = 50;
+    const GAP = 3;
+    const canvasSize = 500;
 
-    let player = { x: 4, y: 9 };
+    // ==== ПЕРСОНАЖ ====
+    const player = {
+        x: 4, y: 9,
+        size: 36,
+        eyeColor: '#fff',
+        bodyColor: '#f1c40f'
+    };
+
+    // ==== УРОВНИ ====
     let obstacles = [];
+    let coins = [];
     let score = 0;
     let gameOver = false;
-    let frame = 0;
+    let win = false;
     let speed = 1;
 
-    function generateObstacles() {
+    // ==== ГЕНЕРАЦИЯ ЛАБИРИНТА ====
+    function generateLevel() {
         const newObs = [];
-        for (let row = 0; row < 10; row++) {
-            const count = 2 + Math.floor(Math.random() * 2);
+        const newCoins = [];
+        // Стены и шипы
+        for (let row = 0; row < ROWS; row++) {
+            const count = 2 + Math.floor(Math.random() * 3);
             const positions = [];
             for (let i = 0; i < count; i++) {
                 let col;
                 do {
                     col = Math.floor(Math.random() * COLS);
-                } while (positions.includes(col) || (row === 9 && col === player.x));
+                } while (positions.includes(col) || (row === 9 && col === player.x) || (row === 0 && col === 4));
                 positions.push(col);
-                newObs.push({ row, col, type: Math.random() > 0.7 ? 'spike' : 'wall' });
+                newObs.push({
+                    row, col,
+                    type: Math.random() > 0.6 ? 'spike' : 'wall',
+                    anim: Math.random() * 100
+                });
             }
         }
-        return newObs;
+        // Монеты
+        for (let i = 0; i < 5; i++) {
+            let row, col;
+            do {
+                row = Math.floor(Math.random() * (ROWS - 1));
+                col = Math.floor(Math.random() * COLS);
+            } while (newObs.some(o => o.row === row && o.col === col) || (row === 9 && col === player.x));
+            newCoins.push({ row, col, collected: false });
+        }
+        return { obstacles: newObs, coins: newCoins };
     }
 
-    obstacles = generateObstacles();
-
-    function resetGame() {
-        player = { x: 4, y: 9 };
-        obstacles = generateObstacles();
-        score = 0;
+    function initLevel() {
+        const level = generateLevel();
+        obstacles = level.obstacles;
+        coins = level.coins;
+        player.x = 4;
+        player.y = 9;
         gameOver = false;
-        frame = 0;
+        win = false;
         speed = 1;
-        scoreSpan.textContent = score;
     }
 
-    function update() {
-        if (gameOver) return;
+    initLevel();
 
-        player.y -= speed / 60;
-        if (player.y < 0) {
-            player.y = 0;
-            score += 1;
-            scoreSpan.textContent = score;
-
-            if (score > best) {
-                best = score;
-                saveProgress(best);
-                bestSpan.textContent = best;
-            }
-
-            obstacles = generateObstacles();
-            const hit = obstacles.some(o => o.row === Math.floor(player.y) && o.col === player.x);
-            if (hit) gameOver = true;
-        }
-
-        const row = Math.floor(player.y);
-        const col = player.x;
-        const hit = obstacles.some(o => o.row === row && o.col === col);
-        if (hit) gameOver = true;
-    }
-
-    function draw() {
-        ctx.clearRect(0, 0, 400, 400);
-
-        for (let r = 0; r < ROWS; r++) {
-            for (let c = 0; c < COLS; c++) {
-                const x = c * CELL + GAP;
-                const y = r * CELL + GAP;
-                ctx.fillStyle = (r + c) % 2 === 0 ? '#1e2a4a' : '#162042';
-                ctx.fillRect(x, y, CELL - GAP, CELL - GAP);
-            }
-        }
-
-        obstacles.forEach(o => {
-            const x = o.col * CELL + GAP;
-            const y = o.row * CELL + GAP;
-            if (o.type === 'spike') {
-                ctx.fillStyle = '#e74c3c';
-                ctx.beginPath();
-                ctx.moveTo(x + 10, y + 30);
-                ctx.lineTo(x + 20, y + 5);
-                ctx.lineTo(x + 30, y + 30);
-                ctx.fill();
-            } else {
-                ctx.fillStyle = '#4a6a9a';
-                ctx.shadowColor = '#3a5a8a';
-                ctx.shadowBlur = 8;
-                ctx.fillRect(x, y, CELL - GAP, CELL - GAP);
-                ctx.shadowBlur = 0;
-            }
-        });
-
-        const exitX = 4 * CELL + GAP;
-        const exitY = 0 * CELL + GAP;
-        ctx.fillStyle = '#2ecc71';
-        ctx.shadowColor = '#2ecc71';
-        ctx.shadowBlur = 15;
-        ctx.fillRect(exitX, exitY, CELL - GAP, CELL - GAP);
-        ctx.shadowBlur = 0;
-
-        const px = player.x * CELL + GAP + 4;
-        const py = player.y * CELL + GAP + 4;
-        ctx.fillStyle = '#f1c40f';
-        ctx.shadowColor = '#f1c40f';
-        ctx.shadowBlur = 20;
-        ctx.fillRect(px, py, CELL - GAP - 8, CELL - GAP - 8);
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#e67e22';
-        ctx.fillRect(px + 4, py + 4, 6, 6);
-        ctx.fillRect(px + 14, py + 4, 6, 6);
-        ctx.fillStyle = '#2c3e50';
-        ctx.fillRect(px + 10, py + 14, 6, 6);
-
-        if (gameOver) {
-            ctx.fillStyle = 'rgba(0,0,0,0.7)';
-            ctx.fillRect(0, 0, 400, 400);
-            ctx.fillStyle = '#fff';
-            ctx.font = 'bold 32px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('💀 GAME OVER', 200, 180);
-            ctx.font = '18px Arial';
-            ctx.fillText('Нажми "Заново"', 200, 230);
-        }
-    }
-
+    // ==== УПРАВЛЕНИЕ ====
     function moveLeft() {
-        if (gameOver) return;
+        if (gameOver || win) return;
         if (player.x > 0) {
             const newX = player.x - 1;
             const row = Math.floor(player.y);
@@ -277,7 +228,7 @@
     }
 
     function moveRight() {
-        if (gameOver) return;
+        if (gameOver || win) return;
         if (player.x < COLS - 1) {
             const newX = player.x + 1;
             const row = Math.floor(player.y);
@@ -286,10 +237,243 @@
         }
     }
 
+    // ==== ОБНОВЛЕНИЕ ====
+    function update() {
+        if (gameOver || win) return;
+
+        // Движение вверх
+        player.y -= speed / 60;
+
+        // Выход на новый уровень
+        if (player.y < 0) {
+            player.y = 0;
+            // Собираем монеты
+            const collected = coins.filter(c => !c.collected);
+            if (collected.length === 0) {
+                win = true;
+                score += 10;
+                scoreSpan.textContent = score;
+                if (score > best) {
+                    best = score;
+                    saveProgress(best);
+                    bestSpan.textContent = best;
+                }
+                return;
+            }
+            // Переход на следующий уровень
+            const level = generateLevel();
+            obstacles = level.obstacles;
+            coins = level.coins;
+            player.y = 9;
+            player.x = 4;
+            score += 1;
+            scoreSpan.textContent = score;
+            if (score > best) {
+                best = score;
+                saveProgress(best);
+                bestSpan.textContent = best;
+            }
+        }
+
+        // Сбор монет
+        const row = Math.floor(player.y);
+        const col = player.x;
+        coins.forEach(c => {
+            if (!c.collected && c.row === row && c.col === col) {
+                c.collected = true;
+                score += 5;
+                scoreSpan.textContent = score;
+                if (score > best) {
+                    best = score;
+                    saveProgress(best);
+                    bestSpan.textContent = best;
+                }
+            }
+        });
+
+        // Столкновения
+        const hit = obstacles.some(o => o.row === row && o.col === col);
+        if (hit) gameOver = true;
+    }
+
+    // ==== ОТРИСОВКА ====
+    function draw() {
+        ctx.clearRect(0, 0, canvasSize, canvasSize);
+
+        // Фон лабиринта
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+                const x = c * CELL + GAP;
+                const y = r * CELL + GAP;
+                const isDark = (r + c) % 2 === 0;
+                ctx.fillStyle = isDark ? '#1a2a4a' : '#12203a';
+                ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                ctx.shadowBlur = 4;
+                ctx.fillRect(x, y, CELL - GAP, CELL - GAP);
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        // Стены и шипы
+        obstacles.forEach(o => {
+            const x = o.col * CELL + GAP;
+            const y = o.row * CELL + GAP;
+            if (o.type === 'spike') {
+                // Шипы
+                ctx.fillStyle = '#e74c3c';
+                ctx.shadowColor = '#e74c3c';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.moveTo(x + 10, y + 35);
+                ctx.lineTo(x + 25, y + 5);
+                ctx.lineTo(x + 40, y + 35);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                // Второй шип
+                ctx.fillStyle = '#c0392b';
+                ctx.beginPath();
+                ctx.moveTo(x + 5, y + 40);
+                ctx.lineTo(x + 15, y + 20);
+                ctx.lineTo(x + 25, y + 40);
+                ctx.fill();
+            } else {
+                // Стены с градиентом
+                const grad = ctx.createLinearGradient(x, y, x + CELL, y + CELL);
+                grad.addColorStop(0, '#4a6a9a');
+                grad.addColorStop(0.5, '#3a5a8a');
+                grad.addColorStop(1, '#2a4a7a');
+                ctx.fillStyle = grad;
+                ctx.shadowColor = '#3a5a8a';
+                ctx.shadowBlur = 12;
+                ctx.fillRect(x + 1, y + 1, CELL - GAP - 2, CELL - GAP - 2);
+                ctx.shadowBlur = 0;
+                // Блик
+                ctx.fillStyle = 'rgba(255,255,255,0.05)';
+                ctx.fillRect(x + 2, y + 2, CELL - GAP - 8, 3);
+            }
+        });
+
+        // Монеты
+        coins.forEach(c => {
+            if (c.collected) return;
+            const x = c.col * CELL + CELL/2;
+            const y = c.row * CELL + CELL/2;
+            ctx.shadowColor = '#f1c40f';
+            ctx.shadowBlur = 20;
+            ctx.fillStyle = '#f1c40f';
+            ctx.beginPath();
+            ctx.arc(x, y, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#f39c12';
+            ctx.beginPath();
+            ctx.arc(x - 2, y - 3, 4, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // Выход (финиш)
+        const exitX = 4 * CELL + CELL/2;
+        const exitY = 0 * CELL + CELL/2;
+        ctx.shadowColor = '#2ecc71';
+        ctx.shadowBlur = 25;
+        ctx.fillStyle = '#2ecc71';
+        ctx.beginPath();
+        ctx.arc(exitX, exitY, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#27ae60';
+        ctx.font = '20px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🏁', exitX, exitY + 2);
+
+        // Игрок (человечек)
+        const px = player.x * CELL + CELL/2;
+        const py = player.y * CELL + CELL/2;
+
+        // Тень
+        ctx.shadowColor = 'rgba(0,0,0,0.3)';
+        ctx.shadowBlur = 20;
+        // Тело
+        ctx.fillStyle = player.bodyColor;
+        ctx.shadowColor = '#f1c40f';
+        ctx.shadowBlur = 25;
+        ctx.beginPath();
+        ctx.arc(px, py - 4, 16, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        // Глаза
+        ctx.fillStyle = '#2c3e50';
+        ctx.beginPath();
+        ctx.arc(px - 6, py - 8, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(px + 6, py - 8, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(px - 4, py - 10, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(px + 8, py - 10, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        // Улыбка
+        ctx.strokeStyle = '#2c3e50';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(px, py - 2, 6, 0.1, Math.PI - 0.1);
+        ctx.stroke();
+        // Шапка
+        ctx.fillStyle = '#e67e22';
+        ctx.fillRect(px - 12, py - 22, 24, 6);
+        ctx.fillRect(px - 8, py - 28, 16, 8);
+        // Ноги
+        ctx.fillStyle = '#2c3e50';
+        ctx.fillRect(px - 8, py + 12, 6, 8);
+        ctx.fillRect(px + 2, py + 12, 6, 8);
+        // Руки
+        ctx.fillStyle = '#d4a017';
+        ctx.fillRect(px - 18, py - 2, 6, 12);
+        ctx.fillRect(px + 12, py - 2, 6, 12);
+
+        ctx.shadowBlur = 0;
+
+        // Game Over / Win
+        if (gameOver) {
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.fillRect(0, 0, 500, 500);
+            ctx.fillStyle = '#e74c3c';
+            ctx.font = 'bold 40px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('💀 GAME OVER', 250, 220);
+            ctx.fillStyle = '#aaa';
+            ctx.font = '18px Arial';
+            ctx.fillText('Нажми "Новая игра"', 250, 270);
+        }
+
+        if (win) {
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.fillRect(0, 0, 500, 500);
+            ctx.fillStyle = '#f1c40f';
+            ctx.font = 'bold 38px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🎉 УРОВЕНЬ ПРОЙДЕН!', 250, 220);
+            ctx.fillStyle = '#2ecc71';
+            ctx.font = '22px Arial';
+            ctx.fillText('Нажми "Новая игра"', 250, 270);
+        }
+    }
+
+    // ==== КНОПКИ ====
     document.getElementById('leftBtn').addEventListener('click', moveLeft);
     document.getElementById('rightBtn').addEventListener('click', moveRight);
-    document.getElementById('restartBtn').addEventListener('click', resetGame);
+    document.getElementById('restartBtn').addEventListener('click', () => {
+        score = 0;
+        scoreSpan.textContent = score;
+        initLevel();
+    });
 
+    // ==== СВАЙПЫ ====
     let touchStartX = 0;
     canvas.addEventListener('touchstart', e => {
         touchStartX = e.touches[0].clientX;
@@ -302,14 +486,13 @@
         touchStartX = e.touches[0].clientX;
     }, { passive: false });
 
-    // Игровой цикл
+    // ==== ИГРОВОЙ ЦИКЛ ====
     function gameLoop() {
         update();
         draw();
         requestAnimationFrame(gameLoop);
     }
 
-    resetGame();
     gameLoop();
 </script>
 </body>
