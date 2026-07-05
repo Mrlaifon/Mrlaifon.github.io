@@ -5,49 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mrlaifon</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #f0f2f5; padding: 0; margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background: #f0f2f5; min-height: 100vh; display: flex; flex-direction: column; }
         body.dark { background: #18191a; color: #e4e6eb; }
 
-        .container { max-width: 700px; width: 100%; margin: 0 auto; background: #fff; flex: 1; display: flex; flex-direction: column; padding: 16px 16px 80px; position: relative; }
+        .container { max-width: 600px; width: 100%; margin: 0 auto; background: #fff; flex: 1; padding: 16px 16px 80px; position: relative; }
         body.dark .container { background: #242526; }
 
         .hidden { display: none !important; }
 
-        /* АВТОРИЗАЦИЯ */
-        .auth { display: flex; flex-direction: column; gap: 10px; padding: 20px 0; }
-        .auth input { padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px; background: #fff; }
+        /* Авторизация */
+        .auth { display: flex; flex-direction: column; gap: 12px; padding: 30px 0; }
+        .auth h2 { font-weight: 600; color: #1b1b1b; }
+        body.dark .auth h2 { color: #e4e6eb; }
+        .auth input { padding: 14px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; background: #fff; }
         body.dark .auth input { background: #3a3b3c; color: #e4e6eb; border-color: #3e3f40; }
-        .auth button { padding: 12px; background: #2b7cf7; color: #fff; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; }
+        .auth button { padding: 14px; background: #2b7cf7; color: #fff; border: none; border-radius: 12px; font-size: 17px; font-weight: 600; cursor: pointer; }
+        .auth-status { color: #e74c3c; font-size: 14px; margin-top: -4px; }
 
-        /* НИЖНЯЯ ПАНЕЛЬ (всегда внизу) */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 700px; margin: 0 auto; display: flex; justify-content: space-around; padding: 10px 0; background: #fff; border-top: 1px solid #ddd; z-index: 1000; }
+        /* Нижняя панель */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 600px; margin: 0 auto; display: flex; justify-content: space-around; padding: 8px 0 12px; background: #fff; border-top: 1px solid #ddd; z-index: 1000; }
         body.dark .bottom-nav { background: #242526; border-top-color: #3e3f40; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #65676b; font-size: 12px; transition: 0.2s; padding: 4px 0; flex: 1; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #65676b; font-size: 11px; padding: 4px 8px; flex: 1; }
         body.dark .nav-item { color: #b0b3b8; }
         .nav-item.active { color: #2b7cf7; }
-        .nav-item .icon { font-size: 24px; line-height: 1.2; }
-        .nav-item span { font-size: 11px; margin-top: 2px; }
+        .nav-item .icon { font-size: 26px; line-height: 1.2; }
 
-        /* СТРАНИЦЫ */
+        /* Страницы */
         .page { display: none; flex: 1; }
         .page.active { display: block; }
 
-        /* ЛЕНТА */
+        /* Лента */
         .feed { margin-top: 12px; display: flex; flex-direction: column; gap: 14px; padding-bottom: 16px; }
-        .post { background: #fff; border-radius: 12px; padding: 14px; border: 1px solid #e4e6eb; }
+        .post { background: #fff; border-radius: 16px; padding: 16px; border: 1px solid #e4e6eb; }
         body.dark .post { background: #3a3b3c; border-color: #3e3f40; }
-
-        .post-header { display: flex; align-items: center; gap: 10px; }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; background: #2b7cf7; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 18px; overflow: hidden; flex-shrink: 0; }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; background: #2b7cf7; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 18px; overflow: hidden; flex-shrink: 0; }
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .post-name { font-weight: 600; }
-        .post-time { font-size: 12px; color: #65676b; margin-left: 8px; }
+        .post-name { font-weight: 600; font-size: 15px; }
+        .post-time { font-size: 12px; color: #65676b; margin-left: 6px; }
         body.dark .post-time { color: #b0b3b8; }
-        .post-text { margin: 8px 0; word-break: break-word; }
-        .post-img { max-width: 100%; border-radius: 10px; margin: 6px 0; max-height: 400px; object-fit: cover; }
+        .post-text { margin: 6px 0 8px; font-size: 15px; word-break: break-word; }
+        .post-img { max-width: 100%; border-radius: 12px; margin: 6px 0; max-height: 400px; object-fit: contain; background: #f0f2f5; }
 
-        .post-actions { display: flex; gap: 16px; border-top: 1px solid #e4e6eb; padding-top: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .post-actions { display: flex; gap: 18px; border-top: 1px solid #e4e6eb; padding-top: 10px; margin-top: 8px; flex-wrap: wrap; }
         body.dark .post-actions { border-top-color: #3e3f40; }
         .action-btn { display: flex; align-items: center; gap: 4px; cursor: pointer; color: #65676b; font-size: 14px; transition: 0.2s; }
         body.dark .action-btn { color: #b0b3b8; }
@@ -60,35 +61,52 @@
         .comment { display: flex; gap: 8px; margin: 4px 0; font-size: 14px; }
         .comment .c-name { font-weight: 500; }
         .comment-input { display: flex; gap: 6px; margin-top: 6px; }
-        .comment-input input { flex: 1; padding: 8px 12px; border-radius: 20px; border: 1px solid #ddd; font-size: 14px; background: #fff; }
+        .comment-input input { flex: 1; padding: 8px 14px; border-radius: 20px; border: 1px solid #ddd; font-size: 14px; background: #fff; }
         body.dark .comment-input input { background: #3a3b3c; color: #e4e6eb; border-color: #3e3f40; }
-        .comment-input button { padding: 8px 14px; border-radius: 20px; border: none; background: #2b7cf7; color: #fff; cursor: pointer; }
+        .comment-input button { padding: 8px 16px; border-radius: 20px; border: none; background: #2b7cf7; color: #fff; cursor: pointer; }
 
-        /* АККАУНТ */
-        .profile-settings { display: flex; flex-direction: column; gap: 12px; }
+        /* Форма поста */
+        .post-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+        .post-form .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .post-form .row input[type="text"] { flex: 1; padding: 12px 16px; border-radius: 24px; border: 1px solid #ddd; font-size: 16px; background: #fff; }
+        body.dark .post-form .row input[type="text"] { background: #3a3b3c; color: #e4e6eb; border-color: #3e3f40; }
+        .post-form .row .file-label { cursor: pointer; background: #e4e6eb; padding: 10px 18px; border-radius: 24px; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+        body.dark .post-form .row .file-label { background: #3a3b3c; color: #e4e6eb; }
+        .post-form .row .post-btn { padding: 12px 24px; border-radius: 24px; border: none; background: #2b7cf7; color: #fff; font-weight: 600; cursor: pointer; font-size: 15px; }
+
+        /* Аккаунт */
+        .profile-settings { display: flex; flex-direction: column; gap: 14px; }
         .profile-settings .avatar-upload { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-        .profile-settings .avatar-upload .avatar.large { width: 64px; height: 64px; font-size: 28px; cursor: pointer; flex-shrink: 0; }
-        .profile-settings input { padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px; background: #fff; }
+        .profile-settings .avatar-upload .avatar.large { width: 72px; height: 72px; font-size: 30px; cursor: pointer; flex-shrink: 0; }
+        .profile-settings .avatar-upload label { color: #2b7cf7; cursor: pointer; font-weight: 500; }
+        .profile-settings input { padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; background: #fff; }
         body.dark .profile-settings input { background: #3a3b3c; color: #e4e6eb; border-color: #3e3f40; }
-        .profile-settings button { padding: 12px; background: #2b7cf7; color: #fff; border: none; border-radius: 10px; cursor: pointer; }
-        .profile-settings .logout { background: #e74c3c; margin-top: 8px; }
+        .profile-settings .btn-primary { padding: 12px; background: #2b7cf7; color: #fff; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        .profile-settings .btn-danger { padding: 12px; background: #e74c3c; color: #fff; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; }
 
-        /* НАСТРОЙКИ */
-        .settings-panel { display: flex; flex-direction: column; gap: 12px; }
+        /* Настройки */
+        .settings-panel { display: flex; flex-direction: column; gap: 14px; }
         .theme-toggle { display: flex; gap: 10px; }
-        .theme-toggle button { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ddd; cursor: pointer; background: #fff; }
+        .theme-toggle button { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; cursor: pointer; background: #fff; font-weight: 500; }
         body.dark .theme-toggle button { background: #3a3b3c; color: #e4e6eb; border-color: #3e3f40; }
         .theme-toggle .active { background: #2b7cf7; color: #fff; border-color: #2b7cf7; }
+        .settings-panel .danger-btn { padding: 12px; background: #e74c3c; color: #fff; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        .settings-panel .info-text { font-size: 13px; color: #888; }
 
-        /* ПОСТ + ФОТО */
-        .upload-btn { background: #2b7cf7; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; }
-        .flex-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
-        .flex-row input[type="text"] { flex: 1; padding: 10px; border-radius: 20px; border: 1px solid #ddd; font-size: 16px; background: #fff; }
-        body.dark .flex-row input[type="text"] { background: #3a3b3c; color: #e4e6eb; border-color: #3e3f40; }
-        .flex-row .file-label { cursor: pointer; background: #e4e6eb; padding: 8px 16px; border-radius: 20px; font-size: 14px; }
-        body.dark .flex-row .file-label { background: #3a3b3c; color: #e4e6eb; }
-        .flex-row button { padding: 10px 20px; border-radius: 20px; border: none; background: #2b7cf7; color: #fff; cursor: pointer; }
         .center { text-align: center; color: #888; padding: 20px 0; }
+        .mt-8 { margin-top: 8px; }
+
+        /* Адаптив для маленьких экранов */
+        @media (max-width: 480px) {
+            .container { padding: 12px 12px 72px; }
+            .post-form .row { gap: 6px; }
+            .post-form .row input[type="text"] { font-size: 14px; padding: 10px 14px; }
+            .post-form .row .file-label { font-size: 13px; padding: 8px 14px; }
+            .post-form .row .post-btn { font-size: 14px; padding: 10px 18px; }
+            .bottom-nav { padding: 4px 0 10px; }
+            .nav-item .icon { font-size: 22px; }
+            .nav-item span { font-size: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -97,49 +115,57 @@
     <!-- АВТОРИЗАЦИЯ -->
     <div id="authBlock" class="auth">
         <h2>Добро пожаловать</h2>
-        <input type="text" id="loginInput" placeholder="Логин">
+        <input type="text" id="loginInput" placeholder="Придумайте логин">
         <input type="password" id="passInput" placeholder="Пароль">
-        <button id="loginBtn">Войти / Зарегистрироваться</button>
-        <span id="authStatus" style="color:red;font-size:14px;"></span>
+        <button id="loginBtn">Войти / Создать аккаунт</button>
+        <span id="authStatus" class="auth-status"></span>
     </div>
 
     <!-- ОСНОВНОЙ КОНТЕНТ -->
     <div id="mainBlock" class="hidden">
 
-        <!-- СТРАНИЦА: ГЛАВНАЯ -->
+        <!-- СТРАНИЦА ГЛАВНАЯ -->
         <div id="pageFeed" class="page active">
-            <div class="flex-row">
-                <input type="text" id="postInput" placeholder="Что нового?">
-                <label class="file-label" for="fileInput">📸 Фото</label>
-                <input type="file" id="fileInput" accept="image/*" style="display:none;">
-                <button id="postBtn">📤</button>
+            <div class="post-form">
+                <div class="row">
+                    <input type="text" id="postInput" placeholder="Что нового?">
+                    <label class="file-label" for="fileInput">📷</label>
+                    <input type="file" id="fileInput" accept="image/*" style="display:none;">
+                    <button class="post-btn" id="postBtn">➜</button>
+                </div>
+                <div id="filePreview" style="display:none; margin-top:4px;"><img id="previewImg" style="max-height:120px; border-radius:12px;"></div>
             </div>
             <div id="feed" class="feed"></div>
         </div>
 
-        <!-- СТРАНИЦА: АККАУНТ -->
+        <!-- СТРАНИЦА АККАУНТ -->
         <div id="pageAccount" class="page">
             <div class="profile-settings">
-                <h3>Мой аккаунт</h3>
+                <h3>👤 Аккаунт</h3>
                 <div class="avatar-upload">
                     <div class="avatar large" id="profileAvatar">👤</div>
-                    <div><input type="file" id="avatarInput" accept="image/*" style="display:none;"><label for="avatarInput" style="cursor:pointer;color:#2b7cf7;">📸 Изменить фото</label></div>
+                    <div>
+                        <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+                        <label for="avatarInput">📸 Изменить фото</label>
+                    </div>
                 </div>
-                <input type="text" id="profileNameInput" placeholder="Ваш ник (как в Telegram)">
-                <button id="saveProfileBtn">Сохранить профиль</button>
-                <button id="logoutBtn" class="logout">Выйти</button>
+                <input type="text" id="profileNameInput" placeholder="Ваше имя (как в Telegram)">
+                <input type="text" id="profileUsernameInput" placeholder="Юзернейм (например, @mrlaifon)">
+                <button class="btn-primary" id="saveProfileBtn">Сохранить профиль</button>
+                <button class="btn-danger" id="logoutBtn">Выйти из аккаунта</button>
             </div>
         </div>
 
-        <!-- СТРАНИЦА: НАСТРОЙКИ -->
+        <!-- СТРАНИЦА НАСТРОЙКИ -->
         <div id="pageSettings" class="page">
             <div class="settings-panel">
-                <h3>Настройки</h3>
+                <h3>⚙️ Настройки</h3>
                 <div class="theme-toggle">
                     <button id="themeLight" class="active">☀️ Светлая</button>
                     <button id="themeDark">🌙 Тёмная</button>
                 </div>
-                <p style="font-size:14px;color:#888;">Версия 1.1</p>
+                <button class="danger-btn" id="clearDataBtn">🗑️ Очистить все данные</button>
+                <p class="info-text">Версия 1.2 • Данные хранятся локально</p>
             </div>
         </div>
     </div>
@@ -202,14 +228,14 @@
                     <div><span class="post-name">${p.authorName}</span><span class="post-time">${p.time}</span></div>
                 </div>
                 <div class="post-text">${p.text}</div>
-                ${p.img ? `<img src="${p.img}" class="post-img" alt="photo">` : ''}
+                ${p.img ? `<img src="${p.img}" class="post-img" alt="photo" loading="lazy">` : ''}
                 <div style="font-size:12px;color:#888;margin:4px 0;">👁 ${views}</div>
                 <div class="post-actions">
                     <span class="action-btn like-btn ${liked ? 'liked' : ''}" data-author="${p.author}" data-time="${p.time}">
                         ${liked ? '❤️' : '🤍'} <span class="count">${likesCount}</span>
                     </span>
                     <span class="action-btn comment-toggle" style="cursor:pointer;">💬 <span class="count">${comments.length}</span></span>
-                    ${isAuthor ? `<span class="action-btn delete" data-author="${p.author}" data-time="${p.time}">🗑️ Удалить</span>` : ''}
+                    ${isAuthor ? `<span class="action-btn delete" data-author="${p.author}" data-time="${p.time}">🗑️</span>` : ''}
                 </div>
                 <div class="comments-area" style="display:none;">
                     ${comments.map(c => `<div class="comment"><span class="c-name">${c.authorName}:</span> ${c.text}</div>`).join('')}
@@ -240,7 +266,7 @@
             };
         });
 
-        // Комментарии (показать/скрыть)
+        // Комментарии
         document.querySelectorAll('.comment-toggle').forEach(el => {
             el.onclick = function() {
                 const area = this.closest('.post').querySelector('.comments-area');
@@ -289,6 +315,7 @@
             main.classList.remove('hidden');
             const user = data.users[data.currentUser];
             document.getElementById('profileNameInput').value = user.name || '';
+            document.getElementById('profileUsernameInput').value = user.username || '';
             const avatarEl = document.getElementById('profileAvatar');
             if (user.avatar) avatarEl.innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
             else avatarEl.textContent = user.name ? user.name[0].toUpperCase() : '👤';
@@ -314,7 +341,7 @@
                 updateUI();
             } else { status.textContent = 'Неверный пароль'; }
         } else {
-            data.users[login] = { password: pass, name: login, posts: [], avatar: null };
+            data.users[login] = { password: pass, name: login, username: '', posts: [], avatar: null };
             data.currentUser = login;
             save();
             status.textContent = '';
@@ -340,38 +367,57 @@
         const file = fileInput.files[0];
         if (!data.currentUser) return;
 
+        const user = data.users[data.currentUser];
+        if (!user.posts) user.posts = [];
+
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                const user = data.users[data.currentUser];
-                if (!user.posts) user.posts = [];
-                user.posts.push({ text: text, time: new Date().toLocaleString(), likes: [], comments: [], id: Date.now(), img: e.target.result, views: 0 });
+                user.posts.push({ text, time: new Date().toLocaleString(), likes: [], comments: [], id: Date.now(), img: e.target.result, views: 0 });
                 save();
                 renderFeed();
                 input.value = '';
                 fileInput.value = '';
+                document.getElementById('filePreview').style.display = 'none';
+                document.getElementById('previewImg').src = '';
             };
             reader.readAsDataURL(file);
         } else {
-            const user = data.users[data.currentUser];
-            if (!user.posts) user.posts = [];
-            user.posts.push({ text: text, time: new Date().toLocaleString(), likes: [], comments: [], id: Date.now(), img: null, views: 0 });
+            user.posts.push({ text, time: new Date().toLocaleString(), likes: [], comments: [], id: Date.now(), img: null, views: 0 });
             save();
             renderFeed();
             input.value = '';
         }
     };
 
+    // Превью фото
+    document.getElementById('fileInput').onchange = function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                document.getElementById('previewImg').src = ev.target.result;
+                document.getElementById('filePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            document.getElementById('filePreview').style.display = 'none';
+        }
+    };
+
     // Сохранение профиля
     document.getElementById('saveProfileBtn').onclick = function() {
         if (!data.currentUser) return;
+        const user = data.users[data.currentUser];
         const name = document.getElementById('profileNameInput').value.trim() || data.currentUser;
-        data.users[data.currentUser].name = name;
+        const username = document.getElementById('profileUsernameInput').value.trim();
+        user.name = name;
+        user.username = username;
         save();
         updateUI();
     };
 
-    // Аватарка
+    // Аватар
     document.getElementById('avatarInput').onchange = function(e) {
         const file = e.target.files[0];
         if (!file || !data.currentUser) return;
@@ -387,9 +433,21 @@
 
     // Выход
     document.getElementById('logoutBtn').onclick = function() {
-        data.currentUser = null;
-        save();
-        updateUI();
+        if (confirm('Вы уверены, что хотите выйти?')) {
+            data.currentUser = null;
+            save();
+            updateUI();
+        }
+    };
+
+    // Очистка данных
+    document.getElementById('clearDataBtn').onclick = function() {
+        if (confirm('Удалить все данные? Это действие нельзя отменить.')) {
+            localStorage.removeItem(STORAGE_KEY);
+            data = { users: {}, currentUser: null, theme: 'light' };
+            save();
+            updateUI();
+        }
     };
 
     // Темы
@@ -400,4 +458,4 @@
     updateUI();
 </script>
 </body>
-                </html>
+</html>
