@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Mrlaifon — лаунчер</title>
+    <title>Mrlaifon — моды</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
         body {
@@ -21,20 +21,16 @@
             flex-direction: column;
             align-items: center;
         }
-
-        /* === КОНТЕЙНЕР === */
         .app {
             max-width: 480px;
             width: 100%;
             background: #12122a;
             border-radius: 32px;
             padding: 20px 16px 16px;
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.6);
             border: 1px solid #2a2a5a;
             position: relative;
         }
-
-        /* === ШАПКА === */
         .header {
             display: flex;
             justify-content: space-between;
@@ -61,28 +57,26 @@
             color: #8a8aaa;
             border: 1px solid #2f2f5a;
         }
-
-        /* === ПРОФИЛЬ (аккаунт) === */
         .profile {
             background: #1a1a36;
             border-radius: 20px;
-            padding: 14px 18px;
+            padding: 10px 16px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 18px;
             border: 1px solid #2a2a5a;
         }
         .profile .avatar {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: linear-gradient(135deg, #f7c948, #f39c12);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 20px;
+            font-size: 18px;
             color: #0b0b1a;
             flex-shrink: 0;
         }
@@ -91,26 +85,24 @@
         }
         .profile .info .name {
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
         }
         .profile .info .status {
-            font-size: 13px;
+            font-size: 12px;
             color: #7a7aaa;
         }
         .profile .login-btn {
             background: #2a4a8a;
             border: none;
             color: #fff;
-            padding: 6px 18px;
+            padding: 5px 16px;
             border-radius: 30px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             transition: 0.2s;
         }
-        .profile .login-btn:hover { background: #3a5a9a; }
-
-        /* === КАТЕГОРИИ === */
+        .profile .login-btn:active { transform: scale(0.94); }
         .categories {
             display: flex;
             gap: 8px;
@@ -123,13 +115,13 @@
         .categories::-webkit-scrollbar { display: none; }
         .categories button {
             flex-shrink: 0;
-            padding: 8px 18px;
+            padding: 6px 16px;
             border-radius: 30px;
             border: 1px solid #2a2a5a;
             background: #161632;
             color: #a0a0c0;
             font-weight: 500;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: 0.2s;
             white-space: nowrap;
@@ -138,15 +130,13 @@
             background: #2a4a8a;
             border-color: #4a7ac0;
             color: #fff;
-            box-shadow: 0 0 20px rgba(60, 100, 255, 0.2);
+            box-shadow: 0 0 20px rgba(60,100,255,0.2);
         }
         .categories button:active { transform: scale(0.96); }
-
-        /* === СЕТКА МОДОВ === */
         .mods-grid {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
         }
         .mod-card {
             background: #161632;
@@ -160,14 +150,14 @@
         }
         .mod-card:active { transform: scale(0.98); }
         .mod-card .icon {
-            width: 56px;
-            height: 56px;
+            width: 52px;
+            height: 52px;
             border-radius: 14px;
             background: #1f1f42;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 26px;
             flex-shrink: 0;
             border: 1px solid #2a2a5a;
         }
@@ -177,10 +167,10 @@
         }
         .mod-card .info .name {
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
         }
         .mod-card .info .desc {
-            font-size: 13px;
+            font-size: 12px;
             color: #8a8aaa;
             white-space: nowrap;
             overflow: hidden;
@@ -190,18 +180,71 @@
             background: #2a6a4a;
             border: none;
             color: #fff;
-            padding: 6px 16px;
+            padding: 5px 14px;
             border-radius: 30px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             transition: 0.2s;
             white-space: nowrap;
             flex-shrink: 0;
         }
         .mod-card .download-btn:active { transform: scale(0.94); }
-
-        /* === НИЖНЯЯ ПАНЕЛЬ (как в приложении) === */
+        .mod-detail {
+            background: #1a1a36;
+            border-radius: 20px;
+            padding: 18px;
+            margin-top: 12px;
+            border: 1px solid #2a2a5a;
+            display: none;
+        }
+        .mod-detail.show { display: block; }
+        .mod-detail .big-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        .mod-detail .big-name {
+            font-weight: 700;
+            font-size: 20px;
+            text-align: center;
+        }
+        .mod-detail .big-desc {
+            color: #b0b0d0;
+            font-size: 14px;
+            text-align: center;
+            margin: 8px 0 14px;
+            line-height: 1.5;
+        }
+        .mod-detail .big-download {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #2a6a4a;
+            border: none;
+            border-radius: 30px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.2s;
+        }
+        .mod-detail .big-download:active { transform: scale(0.96); }
+        .mod-detail .close-detail {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #2a2a5a;
+            border: none;
+            border-radius: 30px;
+            color: #8a8aaa;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 8px;
+            text-align: center;
+        }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -211,7 +254,7 @@
             border-top: 1px solid #1f1f42;
             display: flex;
             justify-content: space-around;
-            padding: 8px 0 12px;
+            padding: 6px 0 12px;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             z-index: 1000;
@@ -224,140 +267,218 @@
             flex-direction: column;
             align-items: center;
             color: #5a5a8a;
-            font-size: 11px;
+            font-size: 10px;
             cursor: pointer;
             transition: 0.2s;
-            padding: 0 8px;
         }
-        .bottom-nav .nav-item .icon { font-size: 22px; }
+        .bottom-nav .nav-item .icon { font-size: 20px; }
         .bottom-nav .nav-item.active { color: #f7c948; }
-
-        /* === ЛИЦЕНЗИЯ И КУКИ === */
-        .popup {
-            position: fixed;
-            bottom: 80px;
-            left: 16px;
-            right: 16px;
-            max-width: 480px;
-            margin: 0 auto;
-            background: #1a1a36;
-            border-radius: 20px;
-            padding: 18px 20px;
-            border: 1px solid #2a2a5a;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            z-index: 2000;
-            display: none;
-        }
-        .popup.show { display: block; }
-        .popup h4 { font-size: 16px; margin-bottom: 6px; }
-        .popup p { font-size: 13px; color: #8a8aaa; line-height: 1.5; }
-        .popup .btn-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 12px;
-        }
-        .popup .btn-row button {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .popup .btn-row .accept {
-            background: #2a6a4a;
-            color: #fff;
-        }
-        .popup .btn-row .decline {
-            background: #3a2a3a;
-            color: #8a7a8a;
-        }
-
-        /* === АДАПТИВ === */
-        @media (min-width: 481px) {
-            .bottom-nav { border-radius: 20px; margin-bottom: 8px; }
-            .mods-grid { gap: 14px; }
-        }
         @media (max-width: 380px) {
             .header .title { font-size: 18px; }
             .mod-card .icon { width: 44px; height: 44px; font-size: 22px; }
             .mod-card .info .name { font-size: 14px; }
-            .mod-card .download-btn { font-size: 12px; padding: 4px 12px; }
+            .mod-card .download-btn { font-size: 11px; padding: 4px 12px; }
         }
     </style>
 </head>
 <body>
     <div class="app">
-        <!-- ШАПКА -->
         <div class="header">
             <span class="title">⚡ Mrlaifon</span>
-            <span class="badge">🚀 лаунчер</span>
+            <span class="badge">📦 каталог модов</span>
         </div>
-
-        <!-- ПРОФИЛЬ -->
-        <div class="profile" id="profileBlock">
-            <div class="avatar" id="avatarDisplay">M</div>
+        <div class="profile">
+            <div class="avatar">M</div>
             <div class="info">
-                <div class="name" id="userName">Гость</div>
-                <div class="status" id="userStatus">Не авторизован</div>
+                <div class="name">Гость</div>
+                <div class="status">👋 Добро пожаловать</div>
             </div>
             <button class="login-btn" id="loginBtn">Войти</button>
         </div>
-
-        <!-- КАТЕГОРИИ -->
-        <div class="categories" id="categoriesContainer">
+        <div class="categories">
             <button class="active" data-cat="all">Все</button>
             <button data-cat="pvp">⚔️ PvP</button>
-            <button data-cat="pve">🧟 PvE</button>
+            <button data-cat="magic">✨ Магия</button>
+            <button data-cat="tech">⚙️ Техника</button>
+            <button data-cat="mobs">🧟 Мобы</button>
+            <button data-cat="world">🌍 Мир</button>
             <button data-cat="tools">⛏️ Инструменты</button>
-            <button data-cat="weapons">🔫 Оружие</button>
-            <button data-cat="armor">🛡️ Броня</button>
         </div>
-
-        <!-- СЕТКА МОДОВ -->
         <div class="mods-grid" id="modsGrid"></div>
+        <div class="mod-detail" id="modDetail">
+            <div class="big-icon" id="detailIcon">🎯</div>
+            <div class="big-name" id="detailName">Название</div>
+            <div class="big-desc" id="detailDesc">Описание</div>
+            <button class="big-download" id="detailDownload">⬇ Скачать мод</button>
+            <button class="close-detail" id="closeDetail">✕ Закрыть</button>
+        </div>
     </div>
-
-    <!-- НИЖНЯЯ ПАНЕЛЬ -->
     <div class="bottom-nav">
         <div class="nav-item active"><span class="icon">🏠</span><span>Главная</span></div>
-        <div class="nav-item" id="licenseBtn"><span class="icon">📄</span><span>Лицензия</span></div>
-        <div class="nav-item" id="cookiesBtn"><span class="icon">🍪</span><span>Куки</span></div>
         <div class="nav-item" id="profileNav"><span class="icon">👤</span><span>Профиль</span></div>
     </div>
 
-    <!-- ПОПАП ЛИЦЕНЗИЯ / КУКИ -->
-    <div class="popup" id="popup">
-        <h4 id="popupTitle">Лицензионное соглашение</h4>
-        <p id="popupText">Все моды предоставляются «как есть». Использование модов осуществляется на ваш страх и риск. Автор не несёт ответственности за возможные проблемы.</p>
-        <div class="btn-row">
-            <button class="accept" id="popupAccept">Принять</button>
-            <button class="decline" id="popupDecline">Закрыть</button>
-        </div>
-    </div>
-
     <script>
-        // ==== ДАННЫЕ МОДОВ ====
+        // ==== МОДЫ С РЕАЛЬНЫМИ ССЫЛКАМИ ====
         const mods = [
-            { id: 1, name: "Hitboxes Mod", category: "pvp", icon: "🎯", desc: "Показывает хитбоксы игроков и мобов.", file: "#" },
-            { id: 2, name: "OptiFine", category: "tools", icon: "⚡", desc: "Оптимизирует FPS и графику.", file: "#" },
-            { id: 3, name: "Zoom Mod", category: "weapons", icon: "🔍", desc: "Увеличивает изображение при нажатии.", file: "#" },
-            { id: 4, name: "X-Ray Textures", category: "tools", icon: "🕳️", desc: "Показывает руду сквозь камень.", file: "#" },
-            { id: 5, name: "PvP Tracker", category: "pvp", icon: "🏹", desc: "Отслеживает урон и здоровье.", file: "#" },
-            { id: 6, name: "Mob Slayer", category: "pve", icon: "⚔️", desc: "Увеличивает урон по мобам.", file: "#" },
-            { id: 7, name: "Diamond Finder", category: "tools", icon: "💎", desc: "Подсвечивает алмазы.", file: "#" },
-            { id: 8, name: "Armor Plus", category: "armor", icon: "🛡️", desc: "Новые виды брони с эффектами.", file: "#" },
-            { id: 9, name: "Better FPS", category: "tools", icon: "🚀", desc: "Увеличивает производительность.", file: "#" },
-            { id: 10, name: "Zoom+", category: "weapons", icon: "🔭", desc: "Улучшенный зум для стрельбы.", file: "#" }
+            {
+                id: 1,
+                name: "Minepal",
+                category: "tools",
+                icon: "⛏️",
+                desc: "Улучшенные инструменты и механизмы.",
+                longDesc: "Добавляет новые виды инструментов и механизмов для упрощения добычи ресурсов. Требует Forge. [citation:1]",
+                file: "https://www.mcmod.cn/download/13805.html",
+                version: "1.16.5"
+            },
+            {
+                id: 2,
+                name: "Mouse Tweaks",
+                category: "tools",
+                icon: "🖱️",
+                desc: "Упрощает управление инвентарём.",
+                longDesc: "Позволяет быстро перемещать предметы в инвентаре. Зажимаешь один стак и проводишь по остальным — они сами к нему присоединятся. [citation:2]",
+                file: "https://www.curseforge.com/minecraft/mc-mods/mouse-tweaks",
+                version: "1.16.5"
+            },
+            {
+                id: 3,
+                name: "Iron Chests",
+                category: "world",
+                icon: "📦",
+                desc: "Новые сундуки из разных материалов.",
+                longDesc: "Добавляет сундуки из железа, золота, алмазов и других материалов. Вместимость больше, чем у обычных сундуков. [citation:2]",
+                file: "https://www.curseforge.com/minecraft/mc-mods/iron-chests",
+                version: "1.16.5"
+            },
+            {
+                id: 4,
+                name: "Mowzie's Mobs",
+                category: "mobs",
+                icon: "🦴",
+                desc: "Новые агрессивные существа.",
+                longDesc: "Добавляет более 8 новых существ: растения-людоеды, фэнтези-монстры и существа из мифов. Все агрессивны и опасны. [citation:2]",
+                file: "https://www.curseforge.com/minecraft/mc-mods/mowzies-mobs",
+                version: "1.16.5"
+            },
+            {
+                id: 5,
+                name: "YUNG's Better Mineshafts",
+                category: "world",
+                icon: "🏚️",
+                desc: "Улучшенные шахты в разных биомах.",
+                longDesc: "Полная переработка шахт. Вид шахты зависит от биома над ней. Генерация уникальных структур в каждом биоме. [citation:2]",
+                file: "https://www.curseforge.com/minecraft/mc-mods/yungs-better-mineshafts-forge",
+                version: "1.16.5"
+            },
+            {
+                id: 6,
+                name: "Valhelsia Structures",
+                category: "world",
+                icon: "🏰",
+                desc: "Новые здания и замки по всему миру.",
+                longDesc: "Добавляет множество новых зданий: от маленьких руин до полноценных замков. В большинстве из них есть сундуки с ценным лутом. [citation:2]",
+                file: "https://www.curseforge.com/minecraft/mc-mods/valhelsia-structures",
+                version: "1.16.5"
+            },
+            {
+                id: 7,
+                name: "Emerald Life",
+                category: "magic",
+                icon: "💚",
+                desc: "Изумрудная броня и инструменты.",
+                longDesc: "Добавляет изумрудную броню и инструменты, которые прочнее и мощнее незеритовых. [citation:3]",
+                file: "https://mod.3dmgame.com/minecraft/16174",
+                version: "1.16.5"
+            },
+            {
+                id: 8,
+                name: "Tensura解放 (Tensura Liberation)",
+                category: "magic",
+                icon: "👹",
+                desc: "Стань демон-лордом или построй королевство.",
+                longDesc: "Позволяет получить новые способности, построить королевство, стать демон-лордом. Развитие на основе популярного аниме. [citation:4]",
+                file: "https://dl.3dmgame.com/patch/270329.html",
+                version: "1.16.5"
+            },
+            {
+                id: 9,
+                name: "Artifacts",
+                category: "magic",
+                icon: "🔮",
+                desc: "Магические артефакты для исследования.",
+                longDesc: "Добавляет множество новых магических предметов и украшений, которые можно использовать в слотах для аксессуаров. [citation:5]",
+                file: "https://dlcfun.com/ru/minecraft/addon-artifacts-7",
+                version: "1.16.5"
+            },
+            {
+                id: 10,
+                name: "Better Animals Plus",
+                category: "mobs",
+                icon: "🐻",
+                desc: "35+ новых животных.",
+                longDesc: "Добавляет более 35 новых животных в игру, с уникальными предметами, едой, блоками и бронёй. [citation:6]",
+                file: "https://www.curseforge.com/minecraft/mc-mods/betteranimalsplus",
+                version: "1.16.5"
+            },
+            {
+                id: 11,
+                name: "Alex's Mobs",
+                category: "mobs",
+                icon: "🦖",
+                desc: "85+ новых мобов.",
+                longDesc: "Добавляет более 85 новых существ с уникальными механиками и высоким качеством исполнения. [citation:10]",
+                file: "https://www.curseforge.com/minecraft/mc-mods/alexs-mobs",
+                version: "1.16.5"
+            },
+            {
+                id: 12,
+                name: "Ruby Mod",
+                category: "magic",
+                icon: "💎",
+                desc: "Рубиновая броня и инструменты.",
+                longDesc: "Добавляет рубиновую руду, броню и инструменты. Пока доступна только через команды (test:). [citation:7]",
+                file: "https://mod.3dmgame.com/minecraft/15278",
+                version: "1.16.5"
+            },
+            {
+                id: 13,
+                name: "Biomes O' Plenty",
+                category: "world",
+                icon: "🌳",
+                desc: "50+ новых биомов.",
+                longDesc: "Добавляет более 50 уникальных биомов с новыми деревьями, цветами и блоками. [citation:6]",
+                file: "https://www.curseforge.com/minecraft/mc-mods/biomes-o-plenty",
+                version: "1.16.5"
+            },
+            {
+                id: 14,
+                name: "Ars Nouveau",
+                category: "magic",
+                icon: "✨",
+                desc: "Создай собственные заклинания.",
+                longDesc: "Позволяет создавать собственные заклинания, призывать магических слуг и создавать могущественные артефакты. [citation:6]",
+                file: "https://www.curseforge.com/minecraft/mc-mods/ars-nouveau",
+                version: "1.16.5"
+            },
+            {
+                id: 15,
+                name: "Botania",
+                category: "magic",
+                icon: "🌸",
+                desc: "Техномагия на основе цветов.",
+                longDesc: "Инновационный мод о магии природы и цветов. Добавляет цветочные технологии. [citation:6]",
+                file: "https://www.curseforge.com/minecraft/mc-mods/botania",
+                version: "1.16.5"
+            }
         ];
 
-        // ==== РЕНДЕР МОДОВ ====
+        // ==== РЕНДЕР ====
         function renderMods(category = 'all') {
             const grid = document.getElementById('modsGrid');
             const filtered = category === 'all' ? mods : mods.filter(m => m.category === category);
             grid.innerHTML = filtered.map(m => `
-                <div class="mod-card">
+                <div class="mod-card" data-id="${m.id}">
                     <div class="icon">${m.icon}</div>
                     <div class="info">
                         <div class="name">${m.name}</div>
@@ -367,12 +488,40 @@
                 </div>
             `).join('');
 
-            document.querySelectorAll('.download-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    alert('✅ Мод будет скачан. Функция в разработке.');
+            document.querySelectorAll('.mod-card .download-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const card = this.closest('.mod-card');
+                    const id = parseInt(card.dataset.id);
+                    const mod = mods.find(m => m.id === id);
+                    if (mod) showDetail(mod);
+                });
+            });
+
+            document.querySelectorAll('.mod-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    const mod = mods.find(m => m.id === id);
+                    if (mod) showDetail(mod);
                 });
             });
         }
+
+        // ==== ДЕТАЛЬНЫЙ ПРОСМОТР ====
+        function showDetail(mod) {
+            document.getElementById('detailIcon').textContent = mod.icon;
+            document.getElementById('detailName').textContent = mod.name;
+            document.getElementById('detailDesc').textContent = mod.longDesc || mod.desc;
+            document.getElementById('detailDownload').onclick = function() {
+                window.open(mod.file, '_blank');
+            };
+            document.getElementById('modDetail').classList.add('show');
+            document.getElementById('modDetail').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        document.getElementById('closeDetail').addEventListener('click', () => {
+            document.getElementById('modDetail').classList.remove('show');
+        });
 
         // ==== КАТЕГОРИИ ====
         document.querySelectorAll('.categories button').forEach(btn => {
@@ -380,66 +529,36 @@
                 document.querySelectorAll('.categories button').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 renderMods(this.dataset.cat);
+                document.getElementById('modDetail').classList.remove('show');
             });
         });
 
-        // ==== ПОПАПЫ ====
-        function showPopup(title, text) {
-            document.getElementById('popupTitle').textContent = title;
-            document.getElementById('popupText').textContent = text;
-            document.getElementById('popup').classList.add('show');
-        }
-        document.getElementById('popupAccept').addEventListener('click', () => {
-            document.getElementById('popup').classList.remove('show');
-        });
-        document.getElementById('popupDecline').addEventListener('click', () => {
-            document.getElementById('popup').classList.remove('show');
-        });
-
-        document.getElementById('licenseBtn').addEventListener('click', () => {
-            showPopup('📄 Лицензионное соглашение', 'Все моды предоставляются «как есть». Автор не несёт ответственности за возможные проблемы при использовании.');
-        });
-        document.getElementById('cookiesBtn').addEventListener('click', () => {
-            showPopup('🍪 Использование куки', 'Этот сайт использует локальные куки для хранения настроек темы и профиля. Данные не передаются третьим лицам.');
-        });
-
-        // ==== ПРОФИЛЬ (демо-авторизация) ====
+        // ==== ПРОФИЛЬ ====
         let isLogged = false;
         document.getElementById('loginBtn').addEventListener('click', function() {
             if (!isLogged) {
-                const name = prompt('Введите ваш ник (или оставьте "Гость"):');
-                if (name !== null) {
-                    const finalName = name.trim() || 'Гость';
-                    document.getElementById('userName').textContent = finalName;
-                    document.getElementById('userStatus').textContent = '✅ Активен';
-                    document.getElementById('avatarDisplay').textContent = finalName[0].toUpperCase();
+                const name = prompt('Введите ваш ник:');
+                if (name && name.trim()) {
+                    document.querySelector('.profile .name').textContent = name.trim();
+                    document.querySelector('.profile .status').textContent = '✅ В сети';
                     this.textContent = 'Выйти';
                     isLogged = true;
                 }
             } else {
-                document.getElementById('userName').textContent = 'Гость';
-                document.getElementById('userStatus').textContent = 'Не авторизован';
-                document.getElementById('avatarDisplay').textContent = 'M';
+                document.querySelector('.profile .name').textContent = 'Гость';
+                document.querySelector('.profile .status').textContent = '👋 Добро пожаловать';
                 this.textContent = 'Войти';
                 isLogged = false;
             }
         });
 
         document.getElementById('profileNav').addEventListener('click', () => {
-            const name = document.getElementById('userName').textContent;
-            alert(`👤 Ваш профиль\nНик: ${name}\nСтатус: ${isLogged ? 'В сети' : 'Офлайн'}`);
+            const name = document.querySelector('.profile .name').textContent;
+            alert(`👤 Профиль\nНик: ${name}\nСтатус: ${isLogged ? 'В сети' : 'Офлайн'}`);
         });
 
         // ==== СТАРТ ====
         renderMods('all');
-
-        // ==== ПРИВЕТСТВЕННЫЙ ПОПАП (первый визит) ====
-        if (!localStorage.getItem('mrlaifon_popup_shown')) {
-            setTimeout(() => {
-                showPopup('👋 Добро пожаловать!', 'Это лаунчер Mrlaifon. Здесь ты найдёшь моды для Minecraft. Для начала войди в профиль.');
-                localStorage.setItem('mrlaifon_popup_shown', 'true');
-            }, 400);
-        }
     </script>
 </body>
 </html>
