@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Mrlaifon — моды</title>
+    <title>Mrlaifon — техника и моды</title>
     <style>
         * {
             margin: 0;
@@ -272,7 +272,7 @@
     <div class="app">
         <div class="header">
             <span class="title">⚡ Mrlaifon</span>
-            <span class="badge">📦 50+ модов</span>
+            <span class="badge">📦 техника + моды</span>
         </div>
         <div class="profile">
             <div class="avatar">M</div>
@@ -284,15 +284,14 @@
         </div>
         <div class="categories">
             <button class="active" data-cat="all">Все</button>
-            <button data-cat="magic">✨ Магия</button>
             <button data-cat="tech">⚙️ Техника</button>
-            <button data-cat="mobs">🧟 Мобы</button>
-            <button data-cat="world">🌍 Мир</button>
+            <button data-cat="trains">🚂 Поезда</button>
+            <button data-cat="factory">🏭 Заводы</button>
             <button data-cat="tools">⛏️ Инструменты</button>
+            <button data-cat="world">🌍 Мир</button>
             <button data-cat="pvp">⚔️ PvP</button>
-            <button data-cat="pve">🧙 PvE</button>
-            <button data-cat="cheats">🕵️ Читы</button>
             <button data-cat="texture">🎨 Текстурпаки</button>
+            <button data-cat="magic">✨ Магия</button>
         </div>
         <div class="mods-grid" id="modsGrid"></div>
         <div class="mod-detail" id="modDetail">
@@ -311,55 +310,46 @@
     </div>
 
     <script>
-        // ===== 50+ МОДОВ С РАБОЧИМИ ССЫЛКАМИ =====
+        // ===== МОДЫ: ТЕХНИКА, ПОЕЗДА, ЗАВОДЫ, ТЕКСТУРПАКИ =====
         const mods = [
-            // ИНСТРУМЕНТЫ
-            { id: 1, name: "Minepal", category: "tools", icon: "⛏️", desc: "Улучшенные инструменты.", longDesc: "Новые инструменты и механизмы.", file: "https://www.mcmod.cn/download/13805.html", version: "1.16.5", specs: ["Мод", "Forge", "Инструменты"] },
-            { id: 2, name: "Mouse Tweaks", category: "tools", icon: "🖱️", desc: "Упрощает инвентарь.", longDesc: "Быстрое перемещение предметов.", file: "https://www.curseforge.com/minecraft/mc-mods/mouse-tweaks", version: "1.16.5", specs: ["Утилита", "Forge", "Инвентарь"] },
-            { id: 3, name: "Iron Chests", category: "world", icon: "📦", desc: "Новые сундуки.", longDesc: "Сундуки из железа, золота и алмазов.", file: "https://www.curseforge.com/minecraft/mc-mods/iron-chests", version: "1.16.5", specs: ["Хранение", "Forge", "Мир"] },
-            { id: 4, name: "YUNG's Better Mineshafts", category: "world", icon: "🏚️", desc: "Улучшенные шахты.", longDesc: "Уникальные шахты в каждом биоме.", file: "https://www.curseforge.com/minecraft/mc-mods/yungs-better-mineshafts-forge", version: "1.16.5", specs: ["Генерация", "Forge", "Мир"] },
-            { id: 5, name: "Valhelsia Structures", category: "world", icon: "🏰", desc: "Здания и замки.", longDesc: "Новые здания и замки по миру.", file: "https://www.curseforge.com/minecraft/mc-mods/valhelsia-structures", version: "1.16.5", specs: ["Структуры", "Forge", "Мир"] },
-            { id: 6, name: "Biomes O' Plenty", category: "world", icon: "🌳", desc: "50+ биомов.", longDesc: "Уникальные биомы.", file: "https://www.curseforge.com/minecraft/mc-mods/biomes-o-plenty", version: "1.16.5", specs: ["Биомы", "Forge", "Мир"] },
-            { id: 7, name: "JourneyMap", category: "tools", icon: "🗺️", desc: "Карта мира.", longDesc: "Карта мира в реальном времени.", file: "https://www.curseforge.com/minecraft/mc-mods/journeymap", version: "1.16.5", specs: ["Карта", "Forge", "Удобство"] },
-            { id: 8, name: "GraveStone", category: "pve", icon: "🪦", desc: "Могила с вещами.", longDesc: "После смерти инвентарь сохраняется.", file: "https://www.curseforge.com/minecraft/mc-mods/gravestone", version: "1.16.5", specs: ["Смерть", "Forge", "Хранение"] },
+            // ===== ТЕХНИКА =====
+            { id: 1, name: "Create", category: "tech", icon: "⚙️", desc: "Механизмы и автоматизация.", longDesc: "Создавай конвейеры, шестерни, поезда и автоматизируй всё.", file: "https://www.curseforge.com/minecraft/mc-mods/create", version: "1.16.5", specs: ["Автоматизация", "Forge", "Механизмы"] },
+            { id: 2, name: "Mekanism", category: "tech", icon: "⚡", desc: "Мощная технология.", longDesc: "Генераторы, ядерная энергия, лазеры и оружие.", file: "https://www.curseforge.com/minecraft/mc-mods/mekanism", version: "1.16.5", specs: ["Энергия", "Forge", "Оружие"] },
+            { id: 3, name: "Thermal Expansion", category: "tech", icon: "🔥", desc: "Термальное расширение.", longDesc: "Переработка руды, генерация энергии и машины.", file: "https://www.curseforge.com/minecraft/mc-mods/thermal-expansion", version: "1.16.5", specs: ["Энергия", "Forge", "Переработка"] },
+            { id: 4, name: "Ender IO", category: "tech", icon: "🌀", desc: "Провода и машины.", longDesc: "Автоматизация, логистика и мощные провода.", file: "https://www.curseforge.com/minecraft/mc-mods/ender-io", version: "1.16.5", specs: ["Автоматизация", "Forge", "Логистика"] },
+            { id: 5, name: "Industrial Foregoing", category: "tech", icon: "🏭", desc: "Промышленность.", longDesc: "Добыча ресурсов, разведение мобов и автоматизация.", file: "https://www.curseforge.com/minecraft/mc-mods/industrial-foregoing", version: "1.16.5", specs: ["Промышленность", "Forge", "Добыча"] },
+            { id: 6, name: "Immersive Engineering", category: "tech", icon: "⚡", desc: "Инженерные машины.", longDesc: "Мультиблочные структуры, провода и генераторы.", file: "https://www.curseforge.com/minecraft/mc-mods/immersive-engineering", version: "1.16.5", specs: ["Инженерия", "Forge", "Мультиблоки"] },
 
-            // МАГИЯ
-            { id: 9, name: "Emerald Life", category: "magic", icon: "💚", desc: "Изумрудная броня.", longDesc: "Изумрудная броня прочнее незерита.", file: "https://mod.3dmgame.com/minecraft/16174", version: "1.16.5", specs: ["Магия", "Forge", "Броня"] },
-            { id: 10, name: "Tensura Liberation", category: "magic", icon: "👹", desc: "Стань демон-лордом.", longDesc: "Способности из аниме.", file: "https://dl.3dmgame.com/patch/270329.html", version: "1.16.5", specs: ["РПГ", "Forge", "Магия"] },
-            { id: 11, name: "Artifacts", category: "magic", icon: "🔮", desc: "Магические артефакты.", longDesc: "Новые магические предметы.", file: "https://dlcfun.com/ru/minecraft/addon-artifacts-7", version: "1.16.5", specs: ["Артефакты", "Forge", "Магия"] },
-            { id: 12, name: "Ars Nouveau", category: "magic", icon: "✨", desc: "Создай заклинания.", longDesc: "Гибкая магия.", file: "https://www.curseforge.com/minecraft/mc-mods/ars-nouveau", version: "1.16.5", specs: ["Магия", "Forge", "Заклинания"] },
-            { id: 13, name: "Botania", category: "magic", icon: "🌸", desc: "Магия цветов.", longDesc: "Техномагия природы.", file: "https://www.curseforge.com/minecraft/mc-mods/botania", version: "1.16.5", specs: ["Техномагия", "Forge", "Природа"] },
-            { id: 14, name: "Mystical Agriculture", category: "magic", icon: "🌱", desc: "Выращивай ресурсы.", longDesc: "Расти руду и ресурсы.", file: "https://www.curseforge.com/minecraft/mc-mods/mystical-agriculture", version: "1.16.5", specs: ["Фермерство", "Forge", "Магия"] },
+            // ===== ПОЕЗДА =====
+            { id: 7, name: "Immersive Railroading", category: "trains", icon: "🚂", desc: "Настоящие поезда.", longDesc: "Добавляет реалистичные локомотивы и вагоны.", file: "https://www.curseforge.com/minecraft/mc-mods/immersive-railroading", version: "1.16.5", specs: ["Поезда", "Forge", "Реализм"] },
+            { id: 8, name: "Railcraft", category: "trains", icon: "🛤️", desc: "Железные дороги.", longDesc: "Сложная система рельсов, вагонов и локомотивов.", file: "https://www.curseforge.com/minecraft/mc-mods/railcraft", version: "1.16.5", specs: ["Железная дорога", "Forge", "Рельсы"] },
 
-            // ТЕХНИКА
-            { id: 15, name: "Create", category: "tech", icon: "⚙️", desc: "Механизмы и автоматизация.", longDesc: "Машины и конвейеры.", file: "https://www.curseforge.com/minecraft/mc-mods/create", version: "1.16.5", specs: ["Автоматизация", "Forge", "Техника"] },
-            { id: 16, name: "Mekanism", category: "tech", icon: "⚡", desc: "Мощная технология.", longDesc: "Генераторы и оружие.", file: "https://www.curseforge.com/minecraft/mc-mods/mekanism", version: "1.16.5", specs: ["Энергия", "Forge", "Техника"] },
-            { id: 17, name: "Thermal Expansion", category: "tech", icon: "🔥", desc: "Термальное расширение.", longDesc: "Переработка руды.", file: "https://www.curseforge.com/minecraft/mc-mods/thermal-expansion", version: "1.16.5", specs: ["Энергия", "Forge", "Переработка"] },
-            { id: 18, name: "Ender IO", category: "tech", icon: "🌀", desc: "Провода и машины.", longDesc: "Автоматизация и логистика.", file: "https://www.curseforge.com/minecraft/mc-mods/ender-io", version: "1.16.5", specs: ["Автоматизация", "Forge", "Логистика"] },
+            // ===== ЗАВОДЫ =====
+            { id: 9, name: "Factory Tech", category: "factory", icon: "🏗️", desc: "Заводские процессы.", longDesc: "Многоступенчатое производство и автоматизация.", file: "https://www.curseforge.com/minecraft/mc-mods/factory-tech", version: "1.16.5", specs: ["Завод", "Forge", "Производство"] },
+            { id: 10, name: "GregTech", category: "factory", icon: "🔧", desc: "Сложная инженерия.", longDesc: "Глубокая переработка, сложные цепи производства.", file: "https://www.curseforge.com/minecraft/mc-mods/gregtech", version: "1.16.5", specs: ["Инженерия", "Forge", "Сложно"] },
 
-            // МОБЫ
-            { id: 19, name: "Mowzie's Mobs", category: "mobs", icon: "🦴", desc: "Мифические существа.", longDesc: "Мобы из мифов.", file: "https://www.curseforge.com/minecraft/mc-mods/mowzies-mobs", version: "1.16.5", specs: ["Мобы", "Forge", "Фэнтези"] },
-            { id: 20, name: "Alex's Mobs", category: "mobs", icon: "🦖", desc: "85+ новых мобов.", longDesc: "Существа с механиками.", file: "https://www.curseforge.com/minecraft/mc-mods/alexs-mobs", version: "1.16.5", specs: ["Мобы", "Forge", "Анимации"] },
-            { id: 21, name: "Ice and Fire", category: "mobs", icon: "🐉", desc: "Драконы и монстры.", longDesc: "Драконы, циклопы и другие.", file: "https://www.curseforge.com/minecraft/mc-mods/ice-and-fire-dragons", version: "1.16.5", specs: ["Драконы", "Forge", "Мифы"] },
-            { id: 22, name: "Lycanites Mobs", category: "mobs", icon: "👾", desc: "Опасные монстры.", longDesc: "Агрессивные монстры.", file: "https://www.curseforge.com/minecraft/mc-mods/lycanites-mobs", version: "1.16.5", specs: ["Монстры", "Forge", "Опасность"] },
+            // ===== ИНСТРУМЕНТЫ =====
+            { id: 11, name: "Mouse Tweaks", category: "tools", icon: "🖱️", desc: "Упрощает инвентарь.", longDesc: "Быстрое перемещение предметов.", file: "https://www.curseforge.com/minecraft/mc-mods/mouse-tweaks", version: "1.16.5", specs: ["Утилита", "Forge", "Инвентарь"] },
+            { id: 12, name: "JourneyMap", category: "tools", icon: "🗺️", desc: "Карта мира.", longDesc: "Карта в реальном времени с маркерами.", file: "https://www.curseforge.com/minecraft/mc-mods/journeymap", version: "1.16.5", specs: ["Карта", "Forge", "Удобство"] },
 
-            // PVP
-            { id: 23, name: "Hitboxes Mod", category: "pvp", icon: "🎯", desc: "Хитбоксы для PvP.", longDesc: "Показывает хитбоксы.", file: "#", version: "1.16.5", specs: ["PvP", "Forge", "Хитбоксы"] },
-            { id: 24, name: "PvP Tracker", category: "pvp", icon: "🏹", desc: "Трекер урона.", longDesc: "Отслеживает здоровье.", file: "#", version: "1.16.5", specs: ["PvP", "Урон", "Forge"] },
-            { id: 25, name: "Zoom Mod", category: "pvp", icon: "🔍", desc: "Зум для стрельбы.", longDesc: "Плавный зум.", file: "#", version: "1.16.5", specs: ["PvP", "Зум", "Forge"] },
+            // ===== МИР =====
+            { id: 13, name: "Biomes O' Plenty", category: "world", icon: "🌳", desc: "50+ новых биомов.", longDesc: "Уникальные биомы для исследования.", file: "https://www.curseforge.com/minecraft/mc-mods/biomes-o-plenty", version: "1.16.5", specs: ["Биомы", "Forge", "Мир"] },
+            { id: 14, name: "Valhelsia Structures", category: "world", icon: "🏰", desc: "Здания и замки.", longDesc: "Генерация зданий и замков по миру.", file: "https://www.curseforge.com/minecraft/mc-mods/valhelsia-structures", version: "1.16.5", specs: ["Структуры", "Forge", "Мир"] },
 
-            // PVE
-            { id: 26, name: "Mob Slayer", category: "pve", icon: "⚔️", desc: "Урон по мобам.", longDesc: "Увеличивает урон.", file: "#", version: "1.16.5", specs: ["PvE", "Урон", "Forge"] },
-            { id: 27, name: "Better Combat", category: "pve", icon: "🗡️", desc: "Боевая система.", longDesc: "Новые анимации боя.", file: "#", version: "1.16.5", specs: ["PvE", "Бой", "Forge"] },
+            // ===== PVP =====
+            { id: 15, name: "Hitboxes Mod", category: "pvp", icon: "🎯", desc: "Хитбоксы для PvP.", longDesc: "Показывает хитбоксы игроков и мобов.", file: "#", version: "1.16.5", specs: ["PvP", "Forge", "Хитбоксы"] },
+            { id: 16, name: "Zoom Mod", category: "pvp", icon: "🔍", desc: "Зум для стрельбы.", longDesc: "Плавное увеличение для дальних выстрелов.", file: "#", version: "1.16.5", specs: ["PvP", "Зум", "Forge"] },
 
-            // ЧИТЫ
-            { id: 28, name: "X-Ray Textures", category: "cheats", icon: "🕳️", desc: "Видеть руду сквозь камень.", longDesc: "Поиск алмазов.", file: "#", version: "1.16.5", specs: ["Чит", "X-Ray", "Ресурсы"] },
-            { id: 29, name: "Chest Search", category: "cheats", icon: "🔍", desc: "Поиск сундуков.", longDesc: "Находит все сундуки.", file: "#", version: "1.16.5", specs: ["Чит", "Поиск", "Сундуки"] },
-            { id: 30, name: "No Fall Damage", category: "cheats", icon: "🪂", desc: "Без урона от падения.", longDesc: "Падай с любой высоты.", file: "#", version: "1.16.5", specs: ["Чит", "Безопасность", "Forge"] },
+            // ===== ТЕКСТУРПАКИ (с реальными ссылками) =====
+            { id: 17, name: "Faithful 32x", category: "texture", icon: "🎨", desc: "Классические HD-текстуры.", longDesc: "Улучшенные текстуры в 32x разрешении.", file: "https://www.curseforge.com/minecraft/texture-packs/faithful-32x", version: "1.16.5", specs: ["Текстурпак", "HD", "Оптимизация"] },
+            { id: 18, name: "Dramatic Skys", category: "texture", icon: "🌅", desc: "Красивое небо.", longDesc: "Реалистичные облака и закаты.", file: "https://www.planetminecraft.com/texture-pack/dramatic-skys-1-16-2-1-16-5/", version: "1.16.5", specs: ["Текстурпак", "Небо", "Реализм"] },
+            { id: 19, name: "LB Photo Realism", category: "texture", icon: "📸", desc: "Реалистичные текстуры.", longDesc: "Максимально реалистичные текстуры.", file: "https://www.curseforge.com/minecraft/texture-packs/lb-photo-realism", version: "1.16.5", specs: ["Текстурпак", "Реализм", "HD"] },
+            { id: 20, name: "Chroma Hills", category: "texture", icon: "🌈", desc: "Цветные HD-текстуры.", longDesc: "Яркие и детализированные текстуры.", file: "https://www.curseforge.com/minecraft/texture-packs/chroma-hills", version: "1.16.5", specs: ["Текстурпак", "HD", "Цвет"] },
+            { id: 21, name: "Simply Optimized", category: "texture", icon: "⚡", desc: "Оптимизация графики.", longDesc: "Улучшает производительность без потери качества.", file: "https://www.curseforge.com/minecraft/texture-packs/simply-optimized", version: "1.16.5", specs: ["Текстурпак", "Оптимизация", "FPS"] },
 
-            // ТЕКСТУРПАКИ
-            { id: 31, name: "Faithful 1.16.5", category: "texture", icon: "🎨", desc: "Классические HD-текстуры.", longDesc: "Улучшенные текстуры.", file: "https://www.curseforge.com/minecraft/texture-packs/faithful-32x", version: "1.16.5", specs: ["Текстурпак", "HD", "Оптимизация"] },
-            { id: 32, name: "Dramatic Skys", category: "texture", icon: "🌅", desc: "Красивое небо.", longDesc: "Реалистичные облака.", file: "https://www.planetminecraft.com/texture-pack/dramatic-skys-1-16-2-1-16-5/", version: "1.16.5", specs: ["Текстурпак", "Небо", "Реализм"] }
+            // ===== МАГИЯ (только самые популярные) =====
+            { id: 22, name: "Ars Nouveau", category: "magic", icon: "✨", desc: "Создай заклинания.", longDesc: "Гибкая система магии.", file: "https://www.curseforge.com/minecraft/mc-mods/ars-nouveau", version: "1.16.5", specs: ["Магия", "Forge", "Заклинания"] },
+            { id: 23, name: "Botania", category: "magic", icon: "🌸", desc: "Магия цветов.", longDesc: "Техномагия природы.", file: "https://www.curseforge.com/minecraft/mc-mods/botania", version: "1.16.5", specs: ["Техномагия", "Forge", "Природа"] }
         ];
 
         // ==== СТАТИСТИКА ====
@@ -427,7 +417,7 @@
                 if (mod.file !== '#') {
                     window.open(mod.file, '_blank');
                 } else {
-                    alert('⚠️ Ссылка на этот мод временно недоступна. Проверьте позже.');
+                    alert('⚠️ Ссылка на этот мод временно недоступна.');
                 }
                 recordDownload();
             };
