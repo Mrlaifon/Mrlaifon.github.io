@@ -1,641 +1,445 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Лабиринт с порталом</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Mrlaifon — лаунчер</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
-        body {
-            background: #0a0a1a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-family: 'Segoe UI', sans-serif;
-            padding: 10px;
-            overflow: hidden;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
-        .game-wrapper {
-            background: linear-gradient(145deg, #1a1a2e, #0f0f2a);
-            padding: 20px;
-            border-radius: 30px;
-            box-shadow: 0 0 60px rgba(0, 150, 255, 0.2), inset 0 0 40px rgba(0, 50, 150, 0.1);
+        body {
+            background: #0b0b1a;
+            color: #e0e0f0;
+            min-height: 100vh;
+            padding: 16px 16px 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* === КОНТЕЙНЕР === */
+        .app {
             max-width: 480px;
             width: 100%;
-            border: 1px solid #2a4a7a;
+            background: #12122a;
+            border-radius: 32px;
+            padding: 20px 16px 16px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+            border: 1px solid #2a2a5a;
+            position: relative;
         }
+
+        /* === ШАПКА === */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: #c8d0e0;
-            padding: 0 6px 14px 6px;
-            font-size: 16px;
-            font-weight: 600;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
             flex-wrap: wrap;
-            gap: 4px;
+            gap: 8px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #1f1f42;
         }
-        .header .title { background: linear-gradient(90deg, #f7c948, #f39c12); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 18px; }
-        .header .score, .header .best, .header .level { font-size: 14px; }
-        .header .score { color: #f7c948; -webkit-text-fill-color: #f7c948; }
-        .header .best { color: #8a9ab0; }
-        .header .level { color: #6a8ab0; }
-        canvas {
-            display: block;
-            width: 100%;
-            aspect-ratio: 1/1;
-            background: radial-gradient(ellipse at center, #1a2a4a, #0a1220);
+        .header .title {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #f7c948, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+        .header .badge {
+            background: #1f1f3a;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            color: #8a8aaa;
+            border: 1px solid #2f2f5a;
+        }
+
+        /* === ПРОФИЛЬ (аккаунт) === */
+        .profile {
+            background: #1a1a36;
             border-radius: 20px;
-            border: 2px solid #2a4a7a;
-            box-shadow: inset 0 0 40px rgba(0, 20, 60, 0.8);
-            touch-action: none;
-            cursor: pointer;
-        }
-        .controls {
+            padding: 14px 18px;
             display: flex;
-            justify-content: space-between;
-            gap: 14px;
-            margin-top: 16px;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            border: 1px solid #2a2a5a;
         }
-        .controls button {
+        .profile .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f7c948, #f39c12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            color: #0b0b1a;
+            flex-shrink: 0;
+        }
+        .profile .info {
             flex: 1;
-            padding: 16px;
-            border: none;
-            border-radius: 16px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #fff;
-            cursor: pointer;
-            transition: 0.1s;
-            box-shadow: 0 5px 0 rgba(0,0,0,0.3);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        .controls button:active { transform: translateY(4px); box-shadow: none; }
-        .controls .left { background: linear-gradient(145deg, #6a3a8a, #4a2a6a); }
-        .controls .right { background: linear-gradient(145deg, #2a8a5a, #1a6a4a); }
-        .restart-btn {
-            margin-top: 14px;
-            padding: 12px;
-            width: 100%;
-            border: none;
-            border-radius: 16px;
-            background: linear-gradient(145deg, #3a3a6a, #2a2a5a);
-            color: #aab;
-            font-size: 16px;
+        .profile .info .name {
             font-weight: 600;
+            font-size: 16px;
+        }
+        .profile .info .status {
+            font-size: 13px;
+            color: #7a7aaa;
+        }
+        .profile .login-btn {
+            background: #2a4a8a;
+            border: none;
+            color: #fff;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
             cursor: pointer;
             transition: 0.2s;
-            box-shadow: 0 4px 0 #1a1a3a;
         }
-        .restart-btn:active { transform: translateY(3px); box-shadow: none; }
-        .restart-btn:hover { background: #4a4a7a; }
-        .info {
-            text-align: center;
-            color: #5a6a8a;
-            font-size: 12px;
-            margin-top: 10px;
-            opacity: 0.7;
+        .profile .login-btn:hover { background: #3a5a9a; }
+
+        /* === КАТЕГОРИИ === */
+        .categories {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            margin-bottom: 16px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
         }
-        @media (max-width: 480px) {
-            .game-wrapper { padding: 12px; }
-            .header { font-size: 13px; }
-            .header .title { font-size: 15px; }
-            .controls button { padding: 14px; font-size: 20px; }
+        .categories::-webkit-scrollbar { display: none; }
+        .categories button {
+            flex-shrink: 0;
+            padding: 8px 18px;
+            border-radius: 30px;
+            border: 1px solid #2a2a5a;
+            background: #161632;
+            color: #a0a0c0;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .categories button.active {
+            background: #2a4a8a;
+            border-color: #4a7ac0;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(60, 100, 255, 0.2);
+        }
+        .categories button:active { transform: scale(0.96); }
+
+        /* === СЕТКА МОДОВ === */
+        .mods-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .mod-card {
+            background: #161632;
+            border-radius: 20px;
+            padding: 14px 16px;
+            border: 1px solid #22224a;
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .mod-card:active { transform: scale(0.98); }
+        .mod-card .icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: #1f1f42;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+            border: 1px solid #2a2a5a;
+        }
+        .mod-card .info {
+            flex: 1;
+            min-width: 0;
+        }
+        .mod-card .info .name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .mod-card .info .desc {
+            font-size: 13px;
+            color: #8a8aaa;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .mod-card .download-btn {
+            background: #2a6a4a;
+            border: none;
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .mod-card .download-btn:active { transform: scale(0.94); }
+
+        /* === НИЖНЯЯ ПАНЕЛЬ (как в приложении) === */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #111128;
+            border-top: 1px solid #1f1f42;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 12px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            max-width: 480px;
+            margin: 0 auto;
+            border-radius: 20px 20px 0 0;
+        }
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #5a5a8a;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 0 8px;
+        }
+        .bottom-nav .nav-item .icon { font-size: 22px; }
+        .bottom-nav .nav-item.active { color: #f7c948; }
+
+        /* === ЛИЦЕНЗИЯ И КУКИ === */
+        .popup {
+            position: fixed;
+            bottom: 80px;
+            left: 16px;
+            right: 16px;
+            max-width: 480px;
+            margin: 0 auto;
+            background: #1a1a36;
+            border-radius: 20px;
+            padding: 18px 20px;
+            border: 1px solid #2a2a5a;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            display: none;
+        }
+        .popup.show { display: block; }
+        .popup h4 { font-size: 16px; margin-bottom: 6px; }
+        .popup p { font-size: 13px; color: #8a8aaa; line-height: 1.5; }
+        .popup .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .popup .btn-row button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .popup .btn-row .accept {
+            background: #2a6a4a;
+            color: #fff;
+        }
+        .popup .btn-row .decline {
+            background: #3a2a3a;
+            color: #8a7a8a;
+        }
+
+        /* === АДАПТИВ === */
+        @media (min-width: 481px) {
+            .bottom-nav { border-radius: 20px; margin-bottom: 8px; }
+            .mods-grid { gap: 14px; }
+        }
+        @media (max-width: 380px) {
+            .header .title { font-size: 18px; }
+            .mod-card .icon { width: 44px; height: 44px; font-size: 22px; }
+            .mod-card .info .name { font-size: 14px; }
+            .mod-card .download-btn { font-size: 12px; padding: 4px 12px; }
         }
     </style>
 </head>
 <body>
-<div class="game-wrapper">
-    <div class="header">
-        <span class="title">🌀 ЛАБИРИНТ</span>
-        <span class="level">📍 <span id="levelDisplay">1</span>/10</span>
-        <span class="score">🏆 <span id="scoreDisplay">0</span></span>
-        <span class="best">👑 <span id="bestDisplay">0</span></span>
+    <div class="app">
+        <!-- ШАПКА -->
+        <div class="header">
+            <span class="title">⚡ Mrlaifon</span>
+            <span class="badge">🚀 лаунчер</span>
+        </div>
+
+        <!-- ПРОФИЛЬ -->
+        <div class="profile" id="profileBlock">
+            <div class="avatar" id="avatarDisplay">M</div>
+            <div class="info">
+                <div class="name" id="userName">Гость</div>
+                <div class="status" id="userStatus">Не авторизован</div>
+            </div>
+            <button class="login-btn" id="loginBtn">Войти</button>
+        </div>
+
+        <!-- КАТЕГОРИИ -->
+        <div class="categories" id="categoriesContainer">
+            <button class="active" data-cat="all">Все</button>
+            <button data-cat="pvp">⚔️ PvP</button>
+            <button data-cat="pve">🧟 PvE</button>
+            <button data-cat="tools">⛏️ Инструменты</button>
+            <button data-cat="weapons">🔫 Оружие</button>
+            <button data-cat="armor">🛡️ Броня</button>
+        </div>
+
+        <!-- СЕТКА МОДОВ -->
+        <div class="mods-grid" id="modsGrid"></div>
     </div>
-    <canvas id="gameCanvas" width="600" height="600"></canvas>
-    <div class="controls">
-        <button class="left" id="leftBtn">◀</button>
-        <button class="right" id="rightBtn">▶</button>
+
+    <!-- НИЖНЯЯ ПАНЕЛЬ -->
+    <div class="bottom-nav">
+        <div class="nav-item active"><span class="icon">🏠</span><span>Главная</span></div>
+        <div class="nav-item" id="licenseBtn"><span class="icon">📄</span><span>Лицензия</span></div>
+        <div class="nav-item" id="cookiesBtn"><span class="icon">🍪</span><span>Куки</span></div>
+        <div class="nav-item" id="profileNav"><span class="icon">👤</span><span>Профиль</span></div>
     </div>
-    <button class="restart-btn" id="restartBtn">🔄 Новая игра</button>
-    <div class="info">Дойди до портала, избегай змеек и бластеров</div>
-</div>
 
-<script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const scoreSpan = document.getElementById('scoreDisplay');
-    const bestSpan = document.getElementById('bestDisplay');
-    const levelSpan = document.getElementById('levelDisplay');
+    <!-- ПОПАП ЛИЦЕНЗИЯ / КУКИ -->
+    <div class="popup" id="popup">
+        <h4 id="popupTitle">Лицензионное соглашение</h4>
+        <p id="popupText">Все моды предоставляются «как есть». Использование модов осуществляется на ваш страх и риск. Автор не несёт ответственности за возможные проблемы.</p>
+        <div class="btn-row">
+            <button class="accept" id="popupAccept">Принять</button>
+            <button class="decline" id="popupDecline">Закрыть</button>
+        </div>
+    </div>
 
-    const STORAGE_KEY = 'tombMaskProgress';
-    function loadProgress() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try { return JSON.parse(saved); } catch(e) {}
-        }
-        return { best: 0 };
-    }
-    function saveProgress(best) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ best }));
-    }
+    <script>
+        // ==== ДАННЫЕ МОДОВ ====
+        const mods = [
+            { id: 1, name: "Hitboxes Mod", category: "pvp", icon: "🎯", desc: "Показывает хитбоксы игроков и мобов.", file: "#" },
+            { id: 2, name: "OptiFine", category: "tools", icon: "⚡", desc: "Оптимизирует FPS и графику.", file: "#" },
+            { id: 3, name: "Zoom Mod", category: "weapons", icon: "🔍", desc: "Увеличивает изображение при нажатии.", file: "#" },
+            { id: 4, name: "X-Ray Textures", category: "tools", icon: "🕳️", desc: "Показывает руду сквозь камень.", file: "#" },
+            { id: 5, name: "PvP Tracker", category: "pvp", icon: "🏹", desc: "Отслеживает урон и здоровье.", file: "#" },
+            { id: 6, name: "Mob Slayer", category: "pve", icon: "⚔️", desc: "Увеличивает урон по мобам.", file: "#" },
+            { id: 7, name: "Diamond Finder", category: "tools", icon: "💎", desc: "Подсвечивает алмазы.", file: "#" },
+            { id: 8, name: "Armor Plus", category: "armor", icon: "🛡️", desc: "Новые виды брони с эффектами.", file: "#" },
+            { id: 9, name: "Better FPS", category: "tools", icon: "🚀", desc: "Увеличивает производительность.", file: "#" },
+            { id: 10, name: "Zoom+", category: "weapons", icon: "🔭", desc: "Улучшенный зум для стрельбы.", file: "#" }
+        ];
 
-    let progress = loadProgress();
-    let best = progress.best;
-    bestSpan.textContent = best;
+        // ==== РЕНДЕР МОДОВ ====
+        function renderMods(category = 'all') {
+            const grid = document.getElementById('modsGrid');
+            const filtered = category === 'all' ? mods : mods.filter(m => m.category === category);
+            grid.innerHTML = filtered.map(m => `
+                <div class="mod-card">
+                    <div class="icon">${m.icon}</div>
+                    <div class="info">
+                        <div class="name">${m.name}</div>
+                        <div class="desc">${m.desc}</div>
+                    </div>
+                    <button class="download-btn" data-file="${m.file}">⬇ Скачать</button>
+                </div>
+            `).join('');
 
-    // ==== РАЗМЕРЫ ====
-    const COLS = 12;
-    const ROWS = 12;
-    const CELL = 50;
-    const GAP = 3;
-    const canvasSize = 600;
-
-    // ==== ИГРОК ====
-    const player = {
-        x: 5, y: 11,
-        size: 32,
-        color: '#f1c40f',
-        shadow: '#f39c12'
-    };
-
-    // ==== ИГРОВЫЕ ОБЪЕКТЫ ====
-    let obstacles = [];
-    let blasters = [];
-    let snake = { x: 0, y: 0, dx: 1, dy: 0, active: false, speed: 0.3 };
-    let score = 0;
-    let level = 1;
-    let gameOver = false;
-    let win = false;
-    let speed = 0.025;
-    let canRestart = false;
-    let portalX = 5;
-    let portalY = 0;
-
-    // ==== ГЕНЕРАЦИЯ УРОВНЯ ====
-    function generateLevel(lvl) {
-        const newObs = [];
-        const newBlasters = [];
-        const count = 2 + Math.floor((lvl - 1) * 0.6);
-        const blasterCount = Math.floor(lvl / 2) + 1;
-
-        // Стены и шипы
-        for (let row = 0; row < ROWS; row++) {
-            const cnt = count + Math.floor(Math.random() * 2);
-            const positions = [];
-            for (let i = 0; i < cnt; i++) {
-                let col;
-                do {
-                    col = Math.floor(Math.random() * COLS);
-                } while (positions.includes(col) || (row === ROWS-1 && col === player.x) || (row === 0 && col === 5));
-                positions.push(col);
-                newObs.push({
-                    row, col,
-                    type: Math.random() > 0.5 ? 'spike' : 'wall'
+            document.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    alert('✅ Мод будет скачан. Функция в разработке.');
                 });
-            }
-        }
-
-        // Бластеры
-        for (let i = 0; i < blasterCount; i++) {
-            let row, col, dir;
-            do {
-                row = Math.floor(Math.random() * (ROWS - 2)) + 1;
-                col = Math.floor(Math.random() * COLS);
-                dir = Math.random() > 0.5 ? 'up' : 'down';
-            } while (newObs.some(o => o.row === row && o.col === col) || (row === ROWS-1 && col === player.x));
-            newBlasters.push({
-                row, col,
-                dir: dir,
-                timer: 0,
-                cooldown: 40 + Math.random() * 60,
-                color: `hsl(${Math.random() * 60 + 180}, 100%, 60%)`,
-                shot: 0
             });
         }
 
-        // Змейка
-        let snakeActive = lvl > 2;
-        let snakeStartX = 0, snakeStartY = 0;
-        if (snakeActive) {
-            const side = Math.floor(Math.random() * 4);
-            if (side === 0) { snakeStartX = 0; snakeStartY = Math.floor(Math.random() * ROWS); }
-            else if (side === 1) { snakeStartX = COLS - 1; snakeStartY = Math.floor(Math.random() * ROWS); }
-            else if (side === 2) { snakeStartX = Math.floor(Math.random() * COLS); snakeStartY = 0; }
-            else { snakeStartX = Math.floor(Math.random() * COLS); snakeStartY = ROWS - 1; }
+        // ==== КАТЕГОРИИ ====
+        document.querySelectorAll('.categories button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.categories button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                renderMods(this.dataset.cat);
+            });
+        });
+
+        // ==== ПОПАПЫ ====
+        function showPopup(title, text) {
+            document.getElementById('popupTitle').textContent = title;
+            document.getElementById('popupText').textContent = text;
+            document.getElementById('popup').classList.add('show');
         }
+        document.getElementById('popupAccept').addEventListener('click', () => {
+            document.getElementById('popup').classList.remove('show');
+        });
+        document.getElementById('popupDecline').addEventListener('click', () => {
+            document.getElementById('popup').classList.remove('show');
+        });
 
-        return {
-            obstacles: newObs,
-            blasters: newBlasters,
-            snakeActive: snakeActive,
-            snakeX: snakeStartX,
-            snakeY: snakeStartY
-        };
-    }
+        document.getElementById('licenseBtn').addEventListener('click', () => {
+            showPopup('📄 Лицензионное соглашение', 'Все моды предоставляются «как есть». Автор не несёт ответственности за возможные проблемы при использовании.');
+        });
+        document.getElementById('cookiesBtn').addEventListener('click', () => {
+            showPopup('🍪 Использование куки', 'Этот сайт использует локальные куки для хранения настроек темы и профиля. Данные не передаются третьим лицам.');
+        });
 
-    function initLevel(lvl) {
-        const data = generateLevel(lvl);
-        obstacles = data.obstacles;
-        blasters = data.blasters;
-        player.x = 5;
-        player.y = ROWS - 1;
-        if (data.snakeActive) {
-            snake = {
-                x: data.snakeX, y: data.snakeY,
-                dx: Math.random() > 0.5 ? 1 : -1,
-                dy: Math.random() > 0.5 ? 1 : -1,
-                active: true,
-                speed: 0.2 + lvl * 0.03
-            };
-        } else {
-            snake = { x: 0, y: 0, dx: 1, dy: 0, active: false, speed: 0 };
-        }
-        gameOver = false;
-        win = false;
-        speed = 0.025 + (lvl - 1) * 0.005;
-        canRestart = false;
-        levelSpan.textContent = lvl;
-        portalX = 5;
-        portalY = 0;
-    }
-
-    initLevel(level);
-
-    // ==== УПРАВЛЕНИЕ ====
-    function moveLeft() {
-        if (gameOver || win) return;
-        if (player.x > 0) {
-            const newX = player.x - 1;
-            const row = Math.floor(player.y);
-            const blocked = obstacles.some(o => o.row === row && o.col === newX);
-            if (!blocked) player.x = newX;
-        }
-    }
-
-    function moveRight() {
-        if (gameOver || win) return;
-        if (player.x < COLS - 1) {
-            const newX = player.x + 1;
-            const row = Math.floor(player.y);
-            const blocked = obstacles.some(o => o.row === row && o.col === newX);
-            if (!blocked) player.x = newX;
-        }
-    }
-
-    function restartGame() {
-        if (!canRestart && !gameOver && !win) return;
-        score = 0;
-        level = 1;
-        scoreSpan.textContent = score;
-        initLevel(level);
-        canRestart = false;
-    }
-
-    // ==== ОБНОВЛЕНИЕ ====
-    function update() {
-        if (gameOver || win) return;
-
-        // Движение вверх
-        player.y -= speed;
-
-        // Портал (переход на новый уровень)
-        if (player.y < 0) {
-            player.y = 0;
-            if (level >= 10) {
-                win = true;
-                score += 25;
-                scoreSpan.textContent = score;
-                if (score > best) {
-                    best = score;
-                    saveProgress(best);
-                    bestSpan.textContent = best;
+        // ==== ПРОФИЛЬ (демо-авторизация) ====
+        let isLogged = false;
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            if (!isLogged) {
+                const name = prompt('Введите ваш ник (или оставьте "Гость"):');
+                if (name !== null) {
+                    const finalName = name.trim() || 'Гость';
+                    document.getElementById('userName').textContent = finalName;
+                    document.getElementById('userStatus').textContent = '✅ Активен';
+                    document.getElementById('avatarDisplay').textContent = finalName[0].toUpperCase();
+                    this.textContent = 'Выйти';
+                    isLogged = true;
                 }
-                canRestart = true;
-                return;
-            }
-            level++;
-            levelSpan.textContent = level;
-            const data = generateLevel(level);
-            obstacles = data.obstacles;
-            blasters = data.blasters;
-            if (data.snakeActive) {
-                snake = {
-                    x: data.snakeX, y: data.snakeY,
-                    dx: Math.random() > 0.5 ? 1 : -1,
-                    dy: Math.random() > 0.5 ? 1 : -1,
-                    active: true,
-                    speed: 0.2 + level * 0.03
-                };
             } else {
-                snake = { x: 0, y: 0, dx: 1, dy: 0, active: false, speed: 0 };
-            }
-            player.y = ROWS - 1;
-            player.x = 5;
-            score += 3;
-            scoreSpan.textContent = score;
-            if (score > best) {
-                best = score;
-                saveProgress(best);
-                bestSpan.textContent = best;
-            }
-            canRestart = true;
-            return;
-        }
-
-        // Змейка
-        if (snake.active) {
-            snake.x += snake.dx * snake.speed;
-            snake.y += snake.dy * snake.speed;
-            if (snake.x < 0 || snake.x >= COLS || snake.y < 0 || snake.y >= ROWS) {
-                // Разворот
-                if (snake.x < 0) snake.x = 0.5;
-                if (snake.x >= COLS) snake.x = COLS - 0.5;
-                if (snake.y < 0) snake.y = 0.5;
-                if (snake.y >= ROWS) snake.y = ROWS - 0.5;
-                snake.dx *= -1;
-                snake.dy *= -1;
-            }
-            // Столкновение с игроком
-            const dist = Math.sqrt((snake.x - player.x) ** 2 + (snake.y - player.y) ** 2);
-            if (dist < 0.8) {
-                gameOver = true;
-                canRestart = true;
-            }
-        }
-
-        // Бластеры
-        const row = Math.floor(player.y);
-        const col = player.x;
-        blasters.forEach(b => {
-            b.timer++;
-            if (b.timer >= b.cooldown) {
-                b.timer = 0;
-                const laserRow = b.dir === 'up' ? row - 1 : row + 1;
-                if (laserRow === row && b.col === col) {
-                    gameOver = true;
-                    canRestart = true;
-                }
-                b.shot = 20;
-            }
-            if (b.shot > 0) b.shot--;
-        });
-
-        // Столкновения со стенами
-        const hit = obstacles.some(o => o.row === row && o.col === col);
-        if (hit) {
-            gameOver = true;
-            canRestart = true;
-        }
-    }
-
-    // ==== ОТРИСОВКА ====
-    function draw() {
-        ctx.clearRect(0, 0, canvasSize, canvasSize);
-
-        // Фон
-        const grad = ctx.createRadialGradient(300, 300, 50, 300, 300, 450);
-        grad.addColorStop(0, '#1a2a4a');
-        grad.addColorStop(1, '#0a1220');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, canvasSize, canvasSize);
-
-        // Сетка лабиринта
-        for (let r = 0; r < ROWS; r++) {
-            for (let c = 0; c < COLS; c++) {
-                const x = c * CELL + GAP;
-                const y = r * CELL + GAP;
-                const isDark = (r + c) % 2 === 0;
-                ctx.fillStyle = isDark ? '#1a2a4a' : '#12203a';
-                ctx.fillRect(x, y, CELL - GAP, CELL - GAP);
-            }
-        }
-
-        // Стены и шипы (объёмные)
-        obstacles.forEach(o => {
-            const x = o.col * CELL + GAP;
-            const y = o.row * CELL + GAP;
-            if (o.type === 'spike') {
-                // Шипы (маленькие)
-                ctx.fillStyle = '#e74c3c';
-                ctx.shadowColor = '#e74c3c';
-                ctx.shadowBlur = 10;
-                for (let i = 0; i < 3; i++) {
-                    const sx = x + 6 + i * 12;
-                    ctx.beginPath();
-                    ctx.moveTo(sx + 4, y + 30);
-                    ctx.lineTo(sx + 10, y + 12);
-                    ctx.lineTo(sx + 16, y + 30);
-                    ctx.fill();
-                }
-                ctx.shadowBlur = 0;
-            } else {
-                // Объёмные стены
-                const x2 = x + CELL - GAP;
-                const y2 = y + CELL - GAP;
-                // Основная стена
-                const grad2 = ctx.createLinearGradient(x, y, x2, y2);
-                grad2.addColorStop(0, '#4a7ab0');
-                grad2.addColorStop(0.5, '#3a5a8a');
-                grad2.addColorStop(1, '#2a4a7a');
-                ctx.fillStyle = grad2;
-                ctx.shadowColor = '#3a6a9a';
-                ctx.shadowBlur = 15;
-                ctx.fillRect(x, y, CELL - GAP, CELL - GAP);
-                ctx.shadowBlur = 0;
-                // Свет
-                ctx.fillStyle = 'rgba(255,255,255,0.12)';
-                ctx.fillRect(x + 2, y + 2, CELL - GAP - 12, 4);
-                ctx.fillRect(x + 2, y + 2, 4, CELL - GAP - 12);
-                // Тень
-                ctx.fillStyle = 'rgba(0,0,0,0.2)';
-                ctx.fillRect(x2 - 6, y + 4, 4, CELL - GAP - 8);
-                ctx.fillRect(x + 4, y2 - 6, CELL - GAP - 8, 4);
+                document.getElementById('userName').textContent = 'Гость';
+                document.getElementById('userStatus').textContent = 'Не авторизован';
+                document.getElementById('avatarDisplay').textContent = 'M';
+                this.textContent = 'Войти';
+                isLogged = false;
             }
         });
 
-        // Бластеры
-        blasters.forEach(b => {
-            const x = b.col * CELL + CELL/2;
-            const y = b.row * CELL + CELL/2;
-            ctx.shadowColor = b.color;
-            ctx.shadowBlur = 25;
-            ctx.fillStyle = b.color;
-            ctx.beginPath();
-            ctx.arc(x, y, 10, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#fff';
-            ctx.beginPath();
-            ctx.arc(x - 3, y - 3, 3, 0, Math.PI * 2);
-            ctx.fill();
-            if (b.shot > 0) {
-                ctx.shadowColor = b.color;
-                ctx.shadowBlur = 50;
-                ctx.strokeStyle = b.color;
-                ctx.lineWidth = 4;
-                ctx.beginPath();
-                const startX = x;
-                const startY = b.dir === 'up' ? y - 15 : y + 15;
-                const endY = b.dir === 'up' ? -10 : canvasSize + 10;
-                ctx.moveTo(startX, startY);
-                ctx.lineTo(startX, endY);
-                ctx.stroke();
-                ctx.shadowBlur = 80;
-                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-                ctx.lineWidth = 12;
-                ctx.beginPath();
-                ctx.moveTo(startX, startY);
-                ctx.lineTo(startX, endY);
-                ctx.stroke();
-                ctx.shadowBlur = 0;
-            }
+        document.getElementById('profileNav').addEventListener('click', () => {
+            const name = document.getElementById('userName').textContent;
+            alert(`👤 Ваш профиль\nНик: ${name}\nСтатус: ${isLogged ? 'В сети' : 'Офлайн'}`);
         });
 
-        // Змейка
-        if (snake.active) {
-            const sx = snake.x * CELL + CELL/2;
-            const sy = snake.y * CELL + CELL/2;
-            ctx.shadowColor = '#2ecc71';
-            ctx.shadowBlur = 30;
-            ctx.fillStyle = '#2ecc71';
-            ctx.beginPath();
-            ctx.arc(sx, sy, 14, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#1a7a4a';
-            ctx.beginPath();
-            ctx.arc(sx - 4, sy - 4, 5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#fff';
-            ctx.beginPath();
-            ctx.arc(sx - 6, sy - 6, 2, 0, Math.PI * 2);
-            ctx.fill();
-            // Хвост
-            ctx.fillStyle = '#27ae60';
-            ctx.beginPath();
-            ctx.arc(sx - snake.dx * 20, sy - snake.dy * 20, 8, 0, Math.PI * 2);
-            ctx.fill();
+        // ==== СТАРТ ====
+        renderMods('all');
+
+        // ==== ПРИВЕТСТВЕННЫЙ ПОПАП (первый визит) ====
+        if (!localStorage.getItem('mrlaifon_popup_shown')) {
+            setTimeout(() => {
+                showPopup('👋 Добро пожаловать!', 'Это лаунчер Mrlaifon. Здесь ты найдёшь моды для Minecraft. Для начала войди в профиль.');
+                localStorage.setItem('mrlaifon_popup_shown', 'true');
+            }, 400);
         }
-
-        // Портал (выход)
-        const px = portalX * CELL + CELL/2;
-        const py = portalY * CELL + CELL/2;
-        ctx.shadowColor = '#2ecc71';
-        ctx.shadowBlur = 40;
-        ctx.fillStyle = '#2ecc71';
-        ctx.beginPath();
-        ctx.arc(px, py, 20, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#1a7a4a';
-        ctx.beginPath();
-        ctx.arc(px, py, 12, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#fff';
-        ctx.font = '18px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('🌀', px, py + 2);
-
-        // Игрок
-        const px2 = player.x * CELL + CELL/2;
-        const py2 = player.y * CELL + CELL/2;
-        ctx.shadowColor = '#f1c40f';
-        ctx.shadowBlur = 35;
-        ctx.fillStyle = '#f1c40f';
-        ctx.beginPath();
-        ctx.arc(px2, py2 - 4, 16, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#2c3e50';
-        ctx.beginPath();
-        ctx.arc(px2 - 6, py2 - 8, 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(px2 + 6, py2 - 8, 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#fff';
-        ctx.beginPath();
-        ctx.arc(px2 - 4, py2 - 10, 1.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(px2 + 8, py2 - 10, 1.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#2c3e50';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.arc(px2, py2 - 2, 6, 0.1, Math.PI - 0.1);
-        ctx.stroke();
-        ctx.fillStyle = '#e67e22';
-        ctx.fillRect(px2 - 12, py2 - 22, 24, 6);
-        ctx.fillRect(px2 - 8, py2 - 28, 16, 8);
-        ctx.fillStyle = '#2c3e50';
-        ctx.fillRect(px2 - 8, py2 + 12, 6, 8);
-        ctx.fillRect(px2 + 2, py2 + 12, 6, 8);
-        ctx.fillStyle = '#d4a017';
-        ctx.fillRect(px2 - 18, py2 - 2, 6, 12);
-        ctx.fillRect(px2 + 12, py2 - 2, 6, 12);
-
-        // Game Over / Win
-        if (gameOver) {
-            ctx.fillStyle = 'rgba(0,0,0,0.75)';
-            ctx.fillRect(0, 0, canvasSize, canvasSize);
-            ctx.fillStyle = '#e74c3c';
-            ctx.font = 'bold 40px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('💀 GAME OVER', canvasSize/2, 240);
-            ctx.fillStyle = '#aaa';
-            ctx.font = '18px Arial';
-            ctx.fillText('Коснись экрана', canvasSize/2, 290);
-        }
-
-        if (win) {
-            ctx.fillStyle = 'rgba(0,0,0,0.7)';
-            ctx.fillRect(0, 0, canvasSize, canvasSize);
-            ctx.fillStyle = '#f1c40f';
-            ctx.font = 'bold 36px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('🎉 ПОБЕДА!', canvasSize/2, 240);
-            ctx.fillStyle = '#2ecc71';
-            ctx.font = '22px Arial';
-            ctx.fillText('Коснись экрана', canvasSize/2, 290);
-        }
-    }
-
-    // ==== КНОПКИ ====
-    document.getElementById('leftBtn').addEventListener('click', moveLeft);
-    document.getElementById('rightBtn').addEventListener('click', moveRight);
-    document.getElementById('restartBtn').addEventListener('click', restartGame);
-
-    // ==== ТАП ПО ЭКРАНУ ====
-    canvas.addEventListener('click', () => {
-        if (gameOver || win) restartGame();
-    });
-
-    // ==== СВАЙПЫ ====
-    let touchStartX = 0;
-    canvas.addEventListener('touchstart', e => {
-        touchStartX = e.touches[0].clientX;
-    });
-    canvas.addEventListener('touchmove', e => {
-        e.preventDefault();
-        const dx = e.touches[0].clientX - touchStartX;
-        if (dx > 30) moveRight();
-        else if (dx < -30) moveLeft();
-        touchStartX = e.touches[0].clientX;
-    }, { passive: false });
-
-    // ==== ИГРОВОЙ ЦИКЛ ====
-    function gameLoop() {
-        update();
-        draw();
-        requestAnimationFrame(gameLoop);
-    }
-
-    gameLoop();
-</script>
+    </script>
 </body>
-    </html>
+</html>
